@@ -87,18 +87,20 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     private void populateAutoComplete() {
+        /**
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED){
             requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
                     MY_PERMISSIONS_REQUEST_READ_CONTACTS);
             //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
 
         }else{
+         */
             getLoaderManager().initLoader(0, null, this);
             //do something, permission was previously granted; or legacy device
-        }
+        //}
     }
 
-    @Override
+    /**@Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
@@ -119,7 +121,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             // other 'case' lines to check for other
             // permissions this app might request
         }
-    }
+    }*/
 
     /**
      * Attempts to sign in or register the account specified by the login form.
