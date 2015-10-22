@@ -1,4 +1,4 @@
-package com.danielchabr.koreandiningadvisorapp.service;
+package com.danielchabr.koreandiningadvisorapp.rest.service;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
 

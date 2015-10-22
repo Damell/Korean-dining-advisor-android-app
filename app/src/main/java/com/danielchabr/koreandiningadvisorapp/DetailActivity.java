@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
 
-public class Detail extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity {
 
     Meal meal;
 

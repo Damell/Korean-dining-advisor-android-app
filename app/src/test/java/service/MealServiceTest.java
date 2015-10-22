@@ -1,7 +1,7 @@
 package service;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
-import com.danielchabr.koreandiningadvisorapp.service.MealService;
+import com.danielchabr.koreandiningadvisorapp.rest.service.MealService;
 import com.google.gson.Gson;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.mockwebserver.MockResponse;

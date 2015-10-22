@@ -4,18 +4,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 
-public class Dashboard extends AppCompatActivity {
+public class DashboardActivity extends AppCompatActivity {
 
     ListView listView;
 
@@ -45,8 +50,8 @@ public class Dashboard extends AppCompatActivity {
                 // ListView Clicked item value
                 Meal selected = (Meal) listView.getItemAtPosition(position);
 
-                Intent showDetail = new Intent(Dashboard.this, Detail.class);
-                showDetail.putExtra("selectedMeal", selected);
+                Intent showDetail = new Intent(DashboardActivity.this, DetailActivity.class);
+                showDetail.putExtra("selectedMeal", Parcels.wrap(selected));
                 startActivity(showDetail);
             }
         });
@@ -80,5 +85,23 @@ class MealAdapter extends ArrayAdapter<Meal> {
     public MealAdapter (Context context, int layoutResourceId, ArrayList<Meal> data) {
         super(context, layoutResourceId, data);
         this.data = data;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        // Get the data item for this position
+        Meal meal = getItem(position);
+        // Check if an existing view is being reused, otherwise inflate the view
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_meal, parent, false);
+        }
+        // Lookup view for data population
+        TextView koreanName = (TextView) convertView.findViewById(R.id.koreanName);
+        TextView englishName = (TextView) convertView.findViewById(R.id.englishName);
+        // Populate the data into the template view using the data object
+        koreanName.setText(meal.getNameKorean());
+        englishName.setText(meal.getNameEnglish());
+        // Return the completed view to render on screen
+        return convertView;
     }
 }
