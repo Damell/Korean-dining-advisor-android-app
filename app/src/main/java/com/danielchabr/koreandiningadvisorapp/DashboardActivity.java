@@ -35,7 +35,7 @@ public class DashboardActivity extends AppCompatActivity {
         meals.add(new Meal("김치 찌개", "Kimchi Jigae"));
         meals.add(new Meal("비빔밥", "Bibimbap"));
 
-        ArrayAdapter<Meal> adapter = new MealAdapter(this, android.R.layout.simple_list_item_1, meals);
+        ArrayAdapter<Meal> adapter = new MealAdapter(this, meals);
 
         // Assign adapter to ListView
         listView.setAdapter(adapter);
@@ -81,10 +81,10 @@ public class DashboardActivity extends AppCompatActivity {
 }
 
 class MealAdapter extends ArrayAdapter<Meal> {
-    ArrayList<Meal> data;
-    public MealAdapter (Context context, int layoutResourceId, ArrayList<Meal> data) {
-        super(context, layoutResourceId, data);
-        this.data = data;
+    ArrayList<Meal> meals;
+    public MealAdapter (Context context, ArrayList<Meal> meals) {
+        super(context, 0, meals);
+        this.meals = meals;
     }
 
     @Override

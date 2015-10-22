@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
 
+import org.parceler.Parcels;
+
 public class DetailActivity extends AppCompatActivity {
 
     Meal meal;
@@ -17,7 +19,7 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         Bundle extras = getIntent().getExtras();
-        meal = extras.getParcelable("selectedMeal");
+        meal = Parcels.unwrap(extras.getParcelable("selectedMeal"));
 
         TextView nameKorean = (TextView) findViewById(R.id.nameKorean);
         nameKorean.setText(meal.getNameKorean());
