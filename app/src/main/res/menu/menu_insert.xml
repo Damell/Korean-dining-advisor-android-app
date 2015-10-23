@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.danielchabr.koreandiningadvisorapp.DetailActivity">
+    <item android:id="@+id/action_insert"
+        android:title="@string/action_insert"
+        android:orderInCategory="100"
+        app:showAsAction="collapseActionView|ifRoom"
+        android:actionViewClass="android.widget.SearchView"/>
+</menu>

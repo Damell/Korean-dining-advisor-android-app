@@ -1,12 +1,18 @@
 package com.danielchabr.koreandiningadvisorapp.model;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import org.parceler.Parcel;
+
+import java.io.ByteArrayOutputStream;
 
 @Parcel
 public class Meal {
     String nameKorean;
     String nameEnglish;
     String description;
+    byte[] photo;
 
     public Meal() { /*Required empty bean constructor*/ }
 
@@ -42,5 +48,19 @@ public class Meal {
 
     public String toString() {
         return nameKorean + '\n' + nameEnglish;
+    }
+
+    public Bitmap getPhoto() {
+        if (this.photo != null) {
+            return BitmapFactory.decodeByteArray(this.photo, 0, this.photo.length);
+        } else {
+            return null;
+        }
+    }
+
+    public void setPhoto(Bitmap photo) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.PNG, 90, stream);
+        this.photo = stream.toByteArray();
     }
 }

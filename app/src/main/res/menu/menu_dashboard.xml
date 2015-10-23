@@ -2,13 +2,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.danielchabr.koreandiningadvisorapp.DashboardActivity">
+    <!--
     <item android:id="@+id/action_account"
         android:title="@string/action_account"
         android:orderInCategory="100"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
+        -->
+    <item android:id="@+id/action_add_meal"
+        android:title="@string/action_add_meal"
+        android:icon="@android:drawable/ic_menu_add"
+        android:orderInCategory="100"
+        app:showAsAction="always" />
+    <!--
     <item android:id="@+id/action_search"
         android:icon="@android:drawable/ic_menu_search"
         android:title="@string/action_search"
+        android:orderInCategory="10"
         app:showAsAction="collapseActionView|ifRoom"
-        android:actionViewClass="android.widget.SearchView"/>
+        android:actionViewClass="android.support.v7.widget.SearchView" />
+        -->
 </menu>

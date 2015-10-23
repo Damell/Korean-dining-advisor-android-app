@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
@@ -18,14 +19,22 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
         Bundle extras = getIntent().getExtras();
         meal = Parcels.unwrap(extras.getParcelable("selectedMeal"));
 
         TextView nameKorean = (TextView) findViewById(R.id.nameKorean);
-        nameKorean.setText(meal.getNameKorean());
-
         TextView nameEnglish = (TextView) findViewById(R.id.nameEnglish);
+        ImageView photo = (ImageView) findViewById(R.id.meal_image);
+        TextView description = (TextView) findViewById(R.id.meal_description);
+
+        nameKorean.setText(meal.getNameKorean());
         nameEnglish.setText(meal.getNameEnglish());
+        description.setText(meal.getDescription());
+        if (meal.getPhoto() != null) {
+            photo.setImageBitmap(meal.getPhoto());
+        }
     }
 
     @Override
