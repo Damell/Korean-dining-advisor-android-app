@@ -2,6 +2,8 @@ package com.danielchabr.koreandiningadvisorapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,6 +31,11 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.logo_full_scaled);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(100, 100, 100)));
 
         listView = (ListView) findViewById(R.id.listView);
 
@@ -98,6 +106,7 @@ class MealAdapter extends ArrayAdapter<Meal> {
         // Lookup view for data population
         TextView koreanName = (TextView) convertView.findViewById(R.id.koreanName);
         TextView englishName = (TextView) convertView.findViewById(R.id.englishName);
+        ImageView photo = (ImageView) convertView.findViewById(R.id.mealPhoto);
         // Populate the data into the template view using the data object
         koreanName.setText(meal.getNameKorean());
         englishName.setText(meal.getNameEnglish());

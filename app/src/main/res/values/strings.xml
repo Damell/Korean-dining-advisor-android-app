@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KoreanDiningAdvisorApp</string>
+    <string name="app_name">Korean Dining Advisor</string>
     <string name="title_activity_dashboard">Dashboard</string>
 
     <string name="hello_world">Hello world!</string>
@@ -8,4 +8,5 @@
     <string name="action_edit">Edit</string>
     <string name="action_account">Account</string>
     <string name="title_activity_detail">Detail</string>
+    <string name="mealPhotoDesc">Meal Photo</string>
 </resources>

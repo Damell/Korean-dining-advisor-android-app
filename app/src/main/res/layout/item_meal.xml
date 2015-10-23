@@ -5,14 +5,19 @@
 
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView" />
+        android:layout_width="@dimen/meal_list_item_height"
+        android:layout_height="@dimen/meal_list_item_height"
+        android:id="@+id/mealPhoto"
+        android:contentDescription="@string/mealPhotoDesc"
+        android:src="@drawable/logo"
+        android:longClickable="true"
+        android:layout_margin="@dimen/activity_horizontal_margin" />
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin">
 
         <TextView
             android:layout_width="wrap_content"
@@ -24,6 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="English Name"
-            android:id="@+id/englishName" />
+            android:id="@+id/englishName"
+            android:layout_marginTop="@dimen/activity_vertical_margin" />
     </LinearLayout>
 </LinearLayout>
