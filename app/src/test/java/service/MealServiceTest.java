@@ -8,6 +8,7 @@ import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,6 +56,11 @@ public class MealServiceTest {
 
         assertEquals(returnedMeal.getNameEnglish(), testMeal.getNameEnglish());
         assertEquals(returnedMeal.getNameKorean(), testMeal.getNameKorean());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        server.shutdown();
     }
 }
 
