@@ -32,8 +32,8 @@ public class DetailActivity extends AppCompatActivity {
         nameKorean.setText(meal.getNameKorean());
         nameEnglish.setText(meal.getNameEnglish());
         description.setText(meal.getDescription());
-        if (meal.getPhoto() != null) {
-            photo.setImageBitmap(meal.getPhoto());
+        if (meal.hasPhoto()) {
+            photo.setImageBitmap(meal.loadPhoto(this));
         }
     }
 

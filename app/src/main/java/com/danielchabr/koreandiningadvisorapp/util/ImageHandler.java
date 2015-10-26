@@ -3,16 +3,71 @@ package com.danielchabr.koreandiningadvisorapp.util;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
-/**
- * Created by damell on 26/10/15.
- */
+import java.io.IOException;
+import java.io.InputStream;
+
 public class ImageHandler {
+
+    public static Bitmap getBitmap(final Context context, final Uri uri, final int MAX_IMAGE_DIMENSION) throws IOException {
+        InputStream stream = context.getContentResolver().openInputStream(uri);
+        String filePath = ImageHandler.getPath(context.getApplicationContext(), uri);
+        //rotate image
+        ExifInterface exif = new ExifInterface(filePath);
+        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                matrix.setScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                matrix.setRotate(180);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_TRANSPOSE:
+                matrix.setRotate(90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_TRANSVERSE:
+                matrix.setRotate(-90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(-90);
+                break;
+        }
+        Bitmap bitmap = BitmapFactory.decodeStream(stream);
+        stream.close();
+        bitmap = scaleDownBitmap(context, bitmap, MAX_IMAGE_DIMENSION);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    public static Bitmap scaleDownBitmap(Context context, Bitmap photo, int newHeight) {
+        final float densityMultiplier = context.getResources().getDisplayMetrics().density;
+
+        int h = (int) (newHeight * densityMultiplier);
+        int w = (int) (h * photo.getWidth() / ((double) photo.getHeight()));
+
+        photo = Bitmap.createScaledBitmap(photo, w, h, true);
+
+        return photo;
+    }
+
     /**
      * Get a file path from a Uri. This will get the the path for Storage Access
      * Framework Documents, as well as the _data field for the MediaStore and

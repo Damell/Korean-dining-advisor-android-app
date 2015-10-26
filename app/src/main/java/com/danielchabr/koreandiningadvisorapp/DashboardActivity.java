@@ -3,6 +3,7 @@ package com.danielchabr.koreandiningadvisorapp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -42,7 +43,6 @@ public class DashboardActivity extends AppCompatActivity {
     private ListView mealListView;
     private ArrayAdapter<Meal> mealAdapter;
     private ArrayList<Meal> meals;
-    private String searchQuery;
     private int INSERT_MEAL_CODE = 8;
     private MealService mealService;
     private EditText searchInput;
@@ -201,8 +201,9 @@ class MealAdapter extends ArrayAdapter<Meal> implements Filterable {
         // Populate the data into the template view using the data object
         koreanName.setText(meal.getNameKorean());
         englishName.setText(meal.getNameEnglish());
-        if (meal.getPhoto() != null) {
-            photo.setImageBitmap(meal.getPhoto());
+        if (meal.hasPhoto()) {
+            Bitmap bitmap = meal.loadPhoto(getContext());
+            photo.setImageBitmap(bitmap);
         }
         // Return the completed view to render on screen
         return convertView;

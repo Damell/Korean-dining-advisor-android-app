@@ -1,12 +1,10 @@
 package com.danielchabr.koreandiningadvisorapp;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -23,11 +21,11 @@ import org.parceler.Parcels;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class InsertMeal extends AppCompatActivity {
     private final int REQUEST_CODE = 5;
     private Bitmap bitmap;
+    private Uri photoUri;
     private ImageView mealPhotoView;
     private final int MAX_IMAGE_DIMENSION = 180;
 
@@ -40,13 +38,6 @@ public class InsertMeal extends AppCompatActivity {
         chooseImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /**
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                startActivityForResult(intent, REQUEST_CODE);
-                 */
                 Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT,null);
                 galleryIntent.setType("image/*");
                 galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -89,8 +80,19 @@ public class InsertMeal extends AppCompatActivity {
             newMeal.setNameKorean(koreanName.getText().toString());
             newMeal.setNameEnglish(englishName.getText().toString());
             newMeal.setDescription(description.getText().toString());
+            if (newMeal.getNameKorean().trim().isEmpty()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Korean name of a dish needs to be filled")
+                        .setTitle("Missing values");
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return false;
+            }
             if (bitmap != null) {
-                newMeal.setPhoto(scaleDownBitmap(bitmap, MAX_IMAGE_DIMENSION, this));
+                //newMeal.setPhoto(scaleDownBitmap(bitmap, MAX_IMAGE_DIMENSION, this));
+                //newMeal.setPhotoUri(photoUri);
+                newMeal.savePhoto(this, bitmap);
+                bitmap.recycle();
             }
 
             Intent showDashboard = new Intent();
@@ -110,60 +112,14 @@ public class InsertMeal extends AppCompatActivity {
                 if (bitmap != null) {
                     bitmap.recycle();
                 }
-
-                InputStream stream = getContentResolver().openInputStream(data.getData());
-                String filePath = ImageHandler.getPath(getApplicationContext(), data.getData());
-                //rotate image
-                ExifInterface exif = new ExifInterface(filePath);
-                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                Matrix matrix = new Matrix();
-                switch (orientation) {
-                    case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
-                        matrix.setScale(-1, 1);
-                        break;
-                    case ExifInterface.ORIENTATION_FLIP_VERTICAL:
-                        matrix.setRotate(180);
-                        matrix.postScale(-1, 1);
-                        break;
-                    case ExifInterface.ORIENTATION_TRANSPOSE:
-                        matrix.setRotate(90);
-                        matrix.postScale(-1, 1);
-                        break;
-                    case ExifInterface.ORIENTATION_TRANSVERSE:
-                        matrix.setRotate(-90);
-                        matrix.postScale(-1, 1);
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_90:
-                        matrix.setRotate(90);
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_180:
-                        matrix.setRotate(180);
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_270:
-                        matrix.setRotate(-90);
-                        break;
-                }
-                bitmap = BitmapFactory.decodeStream(stream);
-                bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                stream.close();
-                mealPhotoView.setImageBitmap(scaleDownBitmap(bitmap, MAX_IMAGE_DIMENSION, this));
+                photoUri = data.getData();
+                bitmap = ImageHandler.getBitmap(this, photoUri, MAX_IMAGE_DIMENSION);
+                mealPhotoView.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
-
-        final float densityMultiplier = context.getResources().getDisplayMetrics().density;
-
-        int h= (int) (newHeight*densityMultiplier);
-        int w= (int) (h * photo.getWidth()/((double) photo.getHeight()));
-
-        photo=Bitmap.createScaledBitmap(photo, w, h, true);
-
-        return photo;
     }
 }
