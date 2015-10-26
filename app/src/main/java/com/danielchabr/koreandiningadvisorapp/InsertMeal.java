@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -15,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
+import com.danielchabr.koreandiningadvisorapp.util.ImageHandler;
 
 import org.parceler.Parcels;
 
@@ -26,7 +29,7 @@ public class InsertMeal extends AppCompatActivity {
     private final int REQUEST_CODE = 5;
     private Bitmap bitmap;
     private ImageView mealPhotoView;
-    private final int IMAGE_HEIGHT = 180;
+    private final int MAX_IMAGE_DIMENSION = 180;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +90,7 @@ public class InsertMeal extends AppCompatActivity {
             newMeal.setNameEnglish(englishName.getText().toString());
             newMeal.setDescription(description.getText().toString());
             if (bitmap != null) {
-                newMeal.setPhoto(scaleDownBitmap(bitmap, IMAGE_HEIGHT, this));
+                newMeal.setPhoto(scaleDownBitmap(bitmap, MAX_IMAGE_DIMENSION, this));
             }
 
             Intent showDashboard = new Intent();
@@ -107,10 +110,43 @@ public class InsertMeal extends AppCompatActivity {
                 if (bitmap != null) {
                     bitmap.recycle();
                 }
+
                 InputStream stream = getContentResolver().openInputStream(data.getData());
+                String filePath = ImageHandler.getPath(getApplicationContext(), data.getData());
+                //rotate image
+                ExifInterface exif = new ExifInterface(filePath);
+                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                Matrix matrix = new Matrix();
+                switch (orientation) {
+                    case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                        matrix.setScale(-1, 1);
+                        break;
+                    case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                        matrix.setRotate(180);
+                        matrix.postScale(-1, 1);
+                        break;
+                    case ExifInterface.ORIENTATION_TRANSPOSE:
+                        matrix.setRotate(90);
+                        matrix.postScale(-1, 1);
+                        break;
+                    case ExifInterface.ORIENTATION_TRANSVERSE:
+                        matrix.setRotate(-90);
+                        matrix.postScale(-1, 1);
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_90:
+                        matrix.setRotate(90);
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_180:
+                        matrix.setRotate(180);
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_270:
+                        matrix.setRotate(-90);
+                        break;
+                }
                 bitmap = BitmapFactory.decodeStream(stream);
+                bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
                 stream.close();
-                mealPhotoView.setImageBitmap(bitmap);
+                mealPhotoView.setImageBitmap(scaleDownBitmap(bitmap, MAX_IMAGE_DIMENSION, this));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -119,7 +155,7 @@ public class InsertMeal extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
+    private Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
 
         final float densityMultiplier = context.getResources().getDisplayMetrics().density;
 
