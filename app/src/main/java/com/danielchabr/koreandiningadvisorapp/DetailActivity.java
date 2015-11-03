@@ -43,9 +43,13 @@ public class DetailActivity extends AppCompatActivity {
         nameEnglish.setText(meal.getEnglishName());
         description.setText(meal.getDescription());
         ratingBar.setRating(meal.getRating());
-        spiciness.setText("" + getResources().getStringArray(R.array.spiciness_levels)[meal.getSpiciGrade() + 1]);
-        ingredients.setText(TextUtils.join(", ", meal.getIngredients()));
-        category.setText(TextUtils.join(", ", meal.getCategory()));
+        spiciness.setText("" + getResources().getStringArray(R.array.spiciness_levels)[meal.getSpicyGrade() + 1]);
+        if (meal.getIngredients() != null) {
+            ingredients.setText(TextUtils.join(", ", meal.getIngredients()));
+        }
+        if (meal.getCategory() != null) {
+            category.setText(TextUtils.join(", ", meal.getCategory()));
+        }
         if (meal.hasPhoto()) {
             MemoryCache memoryCache = new MemoryCache();
             Bitmap bitmap = memoryCache.get(meal.getUuid());

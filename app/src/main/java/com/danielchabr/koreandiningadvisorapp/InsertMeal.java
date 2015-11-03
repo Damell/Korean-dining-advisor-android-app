@@ -184,7 +184,7 @@ public class InsertMeal extends AppCompatActivity {
             RatingBar ratingBar = (RatingBar) findViewById(R.id.insert_meal_ratingBar);
             meal.setRating((int) ratingBar.getRating());
             Spinner spinner = (Spinner) findViewById(R.id.spiciness);
-            meal.setSpiciGrade(spinner.getSelectedItemPosition() - 1);
+            meal.setSpicyGrade(spinner.getSelectedItemPosition() - 1);
 
             MealClient mealClient = new MealClient();
             mealClient.getMealService().save(meal);

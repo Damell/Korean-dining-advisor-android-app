@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 
 import com.danielchabr.koreandiningadvisorapp.util.FileCache;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.parceler.Parcel;
 
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@JsonIgnoreProperties({"id", "mealPic", "rating"})
 @Parcel
 public class Meal {
     String koreanName;
@@ -26,12 +28,13 @@ public class Meal {
     String description;
     byte[] photo;
     Uri photoUri;
+    String id;
     File file;
     List<String> ingredients;
     List<String> category;
     String uuid = UUID.randomUUID().toString();
     int rating;
-    int spiciGrade;
+    int spicyGrade;
     int viewNum;
 
     public Meal() { /*Required empty bean constructor*/ }
@@ -159,13 +162,13 @@ public class Meal {
         this.rating = rating;
     }
 
-    public int getSpiciGrade() {
-        return spiciGrade;
+    public int getSpicyGrade() {
+        return spicyGrade;
     }
 
-    public void setSpiciGrade(int spiciGrade) {
-        if (spiciGrade >= 0 && spiciGrade <= 5) {
-            this.spiciGrade = spiciGrade;
+    public void setSpicyGrade(int spicyGrade) {
+        if (spicyGrade >= 0 && spicyGrade <= 5) {
+            this.spicyGrade = spicyGrade;
         }
     }
 

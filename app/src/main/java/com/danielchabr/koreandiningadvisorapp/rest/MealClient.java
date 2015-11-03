@@ -2,7 +2,7 @@ package com.danielchabr.koreandiningadvisorapp.rest;
 
 import com.danielchabr.koreandiningadvisorapp.rest.service.MealService;
 
-import retrofit.GsonConverterFactory;
+import retrofit.JacksonConverterFactory;
 import retrofit.Retrofit;
 
 public class MealClient
@@ -19,13 +19,13 @@ public class MealClient
     }
 
     private MealService mealServiceConstructor () {
-        Retrofit mealResource = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit mealResource = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(JacksonConverterFactory.create()).build();
         return mealResource.create(MealService.class);
     }
 
     private MealService mockMealServiceConstructor () {
         BASE_URL = "http://www.mocky.io";
-        Retrofit mealResource = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit mealResource = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(JacksonConverterFactory.create()).build();
         return mealResource.create(MealService.class);
     }
 }

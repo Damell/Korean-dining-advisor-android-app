@@ -2,7 +2,7 @@ package service;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
 import com.danielchabr.koreandiningadvisorapp.rest.service.MealService;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import retrofit.GsonConverterFactory;
+import retrofit.JacksonConverterFactory;
 import retrofit.Retrofit;
 
 import static org.junit.Assert.assertEquals;
@@ -30,14 +30,14 @@ public class MealServiceTest {
         server.start();
 
         HttpUrl baseUrl = server.url("/v1/chat/");
-        Retrofit mealResource = new Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit mealResource = new Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(JacksonConverterFactory.create()).build();
         meals = mealResource.create(MealService.class);
     }
 
     @Test(timeout = 500)
     public void mealServiceSaveMealSendsMealObject () throws InterruptedException, IOException {
         Meal testMeal = new Meal("김치찌개", "Kimchi Stew");
-        String json = new Gson().toJson(testMeal);
+        String json = new ObjectMapper().writeValueAsString(testMeal);
         server.enqueue(new MockResponse().setBody(json));
 
         meals.save(testMeal).execute().body();
@@ -49,7 +49,7 @@ public class MealServiceTest {
     @Test(timeout = 500)
     public void mealServiceSaveMealReturnsReceivedObject () throws InterruptedException, IOException {
         Meal testMeal = new Meal("김치찌개", "Kimchi Stew");
-        String json = new Gson().toJson(testMeal);
+        String json = new ObjectMapper().writeValueAsString(testMeal);
         server.enqueue(new MockResponse().setBody(json));
 
         Meal returnedMeal = meals.save(testMeal).execute().body();
