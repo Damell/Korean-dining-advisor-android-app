@@ -28,6 +28,9 @@ import android.widget.TextView;
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
 import com.danielchabr.koreandiningadvisorapp.rest.MealClient;
 import com.danielchabr.koreandiningadvisorapp.rest.service.MealService;
+import com.danielchabr.koreandiningadvisorapp.util.FileCache;
+import com.danielchabr.koreandiningadvisorapp.util.MemoryCache;
+import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
@@ -58,6 +61,9 @@ public class DashboardActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(100, 100, 100)));
 
+        FileCache fileCache = new FileCache(this);
+        fileCache.clear();
+
         searchInput = (EditText) findViewById(R.id.search);
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -76,16 +82,19 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-        // mock meals
         meals = new ArrayList();
+
+        // mock meals
+        /**
         meals.add(new Meal("김치 찌개", "Kimchi Jigae"));
         meals.add(new Meal("비빔밥", "Bibimbap"));
-
-        // loadMeals(mealService, meals, adapter);
+         */
 
         mealListView = (ListView) findViewById(R.id.listView);
         mealAdapter = new MealAdapter(this, meals);
         mealListView.setAdapter(mealAdapter);
+
+        loadMeals(mealService, meals, mealAdapter);
 
         // ListView Item Click Listener
         mealListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -106,21 +115,21 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void loadMeals (MealService mealService, final ArrayList<Meal> meals, final ArrayAdapter<Meal> mealAdapter) {
         Call<List<Meal>> call = mealService.getAll();
-        Log.d("Dashboard", "Sent request");
+        Log.v("Dashboard", "Sent request");
         call.enqueue(new Callback<List<Meal>>() {
             @Override
             public void onResponse(retrofit.Response<List<Meal>> response, Retrofit retrofit) {
-                Log.d("Dashboard", "received response");
-                Log.d("Dashboard", "" + response.body());
-                meals.clear();
+                Log.v("Dashboard", "received response");
+                Log.v("Dashboard", "" + response.body());
+                //meals.clear();
                 meals.addAll(new ArrayList<>(response.body()));
                 mealAdapter.notifyDataSetChanged();
                 //mealListView.deferNotifyDataSetChanged();
             }
             @Override
             public void onFailure(Throwable t) {
-                Log.d("Dashboard", "error " + t.getMessage());
-                Log.d("Dashboard", "error " + t.getStackTrace());
+                Log.v("Dashboard", "error " + t.getMessage());
+                Log.v("Dashboard", "error " + t.getStackTrace());
             }
         });
     }
@@ -154,7 +163,8 @@ public class DashboardActivity extends AppCompatActivity {
         if (requestCode == INSERT_MEAL_CODE && resultCode == Activity.RESULT_OK) {
             Meal newMeal = Parcels.unwrap(data.getExtras().getParcelable("createdMeal"));
             meals.add(newMeal);
-            mealListView.deferNotifyDataSetChanged();
+            mealAdapter.notifyDataSetChanged();
+            //mealListView.deferNotifyDataSetChanged();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -169,6 +179,10 @@ class MealAdapter extends ArrayAdapter<Meal> implements Filterable {
         super(context, 0, meals);
         this.meals = meals;
         this.filteredMeals = meals;
+    }
+
+    public void setData(ArrayList<Meal> meals) {
+        this.meals = meals;
     }
 
     @Override
@@ -199,11 +213,20 @@ class MealAdapter extends ArrayAdapter<Meal> implements Filterable {
         TextView englishName = (TextView) convertView.findViewById(R.id.englishName);
         ImageView photo = (ImageView) convertView.findViewById(R.id.mealPhoto);
         // Populate the data into the template view using the data object
-        koreanName.setText(meal.getNameKorean());
-        englishName.setText(meal.getNameEnglish());
+        koreanName.setText(meal.getKoreanName());
+        englishName.setText(meal.getEnglishName());
+
         if (meal.hasPhoto()) {
-            Bitmap bitmap = meal.loadPhoto(getContext());
-            photo.setImageBitmap(bitmap);
+            MemoryCache memoryCache = new MemoryCache();
+            Bitmap bitmap = memoryCache.get(meal.getUuid());
+            if (bitmap == null) {
+                String url = "http://www.gettyimages.co.uk/gi-resources/images/Homepage/Category-Creative/UK/UK_Creative_462809583.jpg";
+                Picasso.with(getContext()).load(url).into(photo);
+            } else {
+                photo.setImageBitmap(bitmap);
+            }
+        } else {
+            photo.setImageResource(R.drawable.logo);
         }
         // Return the completed view to render on screen
         return convertView;
@@ -232,10 +255,10 @@ class MealAdapter extends ArrayAdapter<Meal> implements Filterable {
             for (int i = 0; i < count; i++) {
                 Meal item = list.get(i);
                 if (isContainsHangul(filterString)) {
-                    filterableString = convertToHangulJasoString(item.getNameKorean());
+                    filterableString = convertToHangulJasoString(item.getKoreanName());
                     filterString = convertToHangulJasoString(filterString);
                 } else {
-                    filterableString = item.getNameEnglish();
+                    filterableString = item.getEnglishName();
                 }
                 if (filterableString.toLowerCase().contains(filterString)) {
                     nlist.add(list.get(i));

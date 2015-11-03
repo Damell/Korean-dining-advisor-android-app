@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -51,7 +52,7 @@ public class ImageHandler {
                 matrix.setRotate(-90);
                 break;
         }
-        Bitmap bitmap = BitmapFactory.decodeStream(stream);
+        Bitmap bitmap = BitmapFactory.decodeStream(new BufferedInputStream(stream));
         stream.close();
         bitmap = scaleDownBitmap(context, bitmap, MAX_IMAGE_DIMENSION);
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);

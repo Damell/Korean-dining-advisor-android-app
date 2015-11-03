@@ -54,8 +54,8 @@ public class MealServiceTest {
 
         Meal returnedMeal = meals.save(testMeal).execute().body();
 
-        assertEquals(returnedMeal.getNameEnglish(), testMeal.getNameEnglish());
-        assertEquals(returnedMeal.getNameKorean(), testMeal.getNameKorean());
+        assertEquals(returnedMeal.getEnglishName(), testMeal.getEnglishName());
+        assertEquals(returnedMeal.getKoreanName(), testMeal.getKoreanName());
     }
 
     @After

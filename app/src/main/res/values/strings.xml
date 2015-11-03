@@ -18,4 +18,22 @@
     <string name="korean_title">Korean Title</string>
     <string name="english_title">English Title</string>
     <string name="description">Description</string>
+    <string name="upload">Upload</string>
+    <string name="transliteration">Transliteration</string>
+    <string name="rating">Rating</string>
+    <string name="spiciness">Spiciness</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="category">Category</string>
+    <string name="addIngredient">Add ingredient</string>
+    <string name="unknown">Unknown</string>
+
+    <string-array name="spiciness_levels">
+        <item></item>
+        <item>0 - not spicy</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5 - spicy as hell!!!</item>
+    </string-array>
 </resources>

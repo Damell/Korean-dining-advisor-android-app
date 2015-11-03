@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 
+import com.danielchabr.koreandiningadvisorapp.util.FileCache;
+
 import org.parceler.Parcel;
 
 import java.io.File;
@@ -12,30 +14,47 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Parcel
 public class Meal {
-    String nameKorean;
-    String nameEnglish;
+    String koreanName;
+    String englishName;
+    String transliteratedName;
     String description;
     byte[] photo;
     Uri photoUri;
-    String filename;
+    File file;
+    List<String> ingredients;
+    List<String> category;
+    String uuid = UUID.randomUUID().toString();
+    int rating;
+    int spiciGrade;
+    int viewNum;
 
     public Meal() { /*Required empty bean constructor*/ }
 
     public Meal(String nameKorean, String nameEnglish) {
-        this.nameKorean = nameKorean;
-        this.nameEnglish = nameEnglish;
+        this.koreanName = nameKorean;
+        this.englishName = nameEnglish;
     }
 
-    public String getNameEnglish() {
-        return nameEnglish;
+    public String getKoreanName() {
+        return koreanName;
     }
 
-    public void setNameEnglish(String nameEnglish) {
-        this.nameEnglish = nameEnglish;
+    public void setKoreanName(String koreanName) {
+        this.koreanName = koreanName;
+    }
+
+    public String getEnglishName() {
+        return englishName;
+    }
+
+    public void setEnglishName(String englishName) {
+        this.englishName = englishName;
     }
 
     public String getDescription() {
@@ -46,17 +65,8 @@ public class Meal {
         this.description = description;
     }
 
-    public String getNameKorean() {
-
-        return nameKorean;
-    }
-
-    public void setNameKorean(String nameKorean) {
-        this.nameKorean = nameKorean;
-    }
-
     public String toString() {
-        return nameKorean + '\n' + nameEnglish;
+        return koreanName + '\n' + englishName;
     }
 
     /**
@@ -76,11 +86,12 @@ public class Meal {
      */
 
     public void savePhoto(Context context, Bitmap photo) {
-        this.filename = this.getNameEnglish() + photo.getGenerationId() + new Random().nextInt();
+        FileCache fileCache = new FileCache(context);
+        this.photoUri = Uri.parse("localFile://" + this.getEnglishName() + photo.getGenerationId());
         FileOutputStream out = null;
+        file = fileCache.getFile(photoUri.toString());
         try {
-            File file = new File(context.getFilesDir(), filename);
-            out = new FileOutputStream(file);
+            out = new FileOutputStream(fileCache.getFile(photoUri.toString()));
             photo.compress(Bitmap.CompressFormat.JPEG, 85, out); // bmp is your Bitmap instance
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,9 +108,9 @@ public class Meal {
     }
 
     public Bitmap loadPhoto(Context context) {
-        File file = new File(context.getFilesDir(), this.filename);
+        FileCache fileCache = new FileCache(context);
         try {
-            return BitmapFactory.decodeStream(new FileInputStream(file));
+            return BitmapFactory.decodeStream(new FileInputStream(fileCache.getFile(photoUri.toString())));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return null;
@@ -107,6 +118,70 @@ public class Meal {
     }
 
     public boolean hasPhoto() {
-        return filename != null;
+        return photoUri != null;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public List<String> getIngredients() {
+        return ingredients;
+    }
+
+    public void addIngredient(String ingredient) {
+        if (this.ingredients == null) {
+            this.ingredients = new ArrayList<>();
+        }
+        this.ingredients.add(ingredient);
+    }
+
+    public List<String> getCategory() {
+        return category;
+    }
+
+    public void addCategory(String category) {
+        if (this.category == null) {
+            this.category = new ArrayList<>();
+        }
+        this.category.add(category);
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public int getSpiciGrade() {
+        return spiciGrade;
+    }
+
+    public void setSpiciGrade(int spiciGrade) {
+        if (spiciGrade >= 0 && spiciGrade <= 5) {
+            this.spiciGrade = spiciGrade;
+        }
+    }
+
+    public int getViewNum() {
+        return viewNum;
+    }
+
+    public void setViewNum(int viewNum) {
+        this.viewNum = viewNum;
+    }
+
+    public String getTransliteratedName() {
+        return transliteratedName;
+    }
+
+    public void setTransliteratedName(String transliteratedName) {
+        this.transliteratedName = transliteratedName;
     }
 }

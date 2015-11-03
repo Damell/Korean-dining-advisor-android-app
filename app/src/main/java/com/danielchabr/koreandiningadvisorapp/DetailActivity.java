@@ -1,13 +1,17 @@
 package com.danielchabr.koreandiningadvisorapp;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
+import com.danielchabr.koreandiningadvisorapp.util.MemoryCache;
 
 import org.parceler.Parcels;
 
@@ -26,14 +30,32 @@ public class DetailActivity extends AppCompatActivity {
 
         TextView nameKorean = (TextView) findViewById(R.id.nameKorean);
         TextView nameEnglish = (TextView) findViewById(R.id.nameEnglish);
+        TextView transliteration = (TextView) findViewById(R.id.transliteration);
         ImageView photo = (ImageView) findViewById(R.id.meal_image);
-        TextView description = (TextView) findViewById(R.id.meal_description);
+        TextView description = (TextView) findViewById(R.id.description);
+        RatingBar ratingBar = (RatingBar) findViewById(R.id.meal_ratingBar);
+        TextView spiciness = (TextView) findViewById(R.id.spiciness);
+        TextView ingredients = (TextView) findViewById(R.id.ingredients);
+        TextView category = (TextView) findViewById(R.id.categories);
 
-        nameKorean.setText(meal.getNameKorean());
-        nameEnglish.setText(meal.getNameEnglish());
+        nameKorean.setText(meal.getKoreanName());
+        transliteration.setText(meal.getTransliteratedName());
+        nameEnglish.setText(meal.getEnglishName());
         description.setText(meal.getDescription());
+        ratingBar.setRating(meal.getRating());
+        spiciness.setText("" + getResources().getStringArray(R.array.spiciness_levels)[meal.getSpiciGrade() + 1]);
+        ingredients.setText(TextUtils.join(", ", meal.getIngredients()));
+        category.setText(TextUtils.join(", ", meal.getCategory()));
         if (meal.hasPhoto()) {
-            photo.setImageBitmap(meal.loadPhoto(this));
+            MemoryCache memoryCache = new MemoryCache();
+            Bitmap bitmap = memoryCache.get(meal.getUuid());
+            if (bitmap == null) {
+                photo.setImageBitmap(meal.loadPhoto(this));
+                //String url = "http://www.gettyimages.co.uk/gi-resources/images/Homepage/Category-Creative/UK/UK_Creative_462809583.jpg";
+                //Picasso.with(this).load(url).into(photo);
+            } else {
+                photo.setImageBitmap(bitmap);
+            }
         }
     }
 
