@@ -82,13 +82,16 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-        meals = new ArrayList();
-
-        // mock meals
-        /**
-        meals.add(new Meal("김치 찌개", "Kimchi Jigae"));
-        meals.add(new Meal("비빔밥", "Bibimbap"));
-         */
+        if (savedInstanceState != null) {
+            meals = Parcels.unwrap(savedInstanceState.getParcelable("meals"));
+        } else {
+            meals = new ArrayList();
+            // mock meals
+            /**
+             meals.add(new Meal("김치 찌개", "Kimchi Jigae"));
+             meals.add(new Meal("비빔밥", "Bibimbap"));
+             */
+        }
 
         mealListView = (ListView) findViewById(R.id.listView);
         mealAdapter = new MealAdapter(this, meals);
@@ -111,6 +114,12 @@ public class DashboardActivity extends AppCompatActivity {
                 startActivity(showDetail);
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        bundle.putParcelable("meals", Parcels.wrap(meals));
     }
 
     private void loadMeals (MealService mealService, final ArrayList<Meal> meals, final ArrayAdapter<Meal> mealAdapter) {

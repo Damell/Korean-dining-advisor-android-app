@@ -7,7 +7,7 @@ import retrofit.Retrofit;
 
 public class MealClient
 {
-    private static String BASE_URL = "https://kda-damell.rhcloud.com/meals";
+    private static String BASE_URL = "http://kda-damell.rhcloud.com";
     private MealService mealService;
 
     public MealClient() {
