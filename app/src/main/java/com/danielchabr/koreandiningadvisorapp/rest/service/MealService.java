@@ -2,6 +2,7 @@ package com.danielchabr.koreandiningadvisorapp.rest.service;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.ResponseBody;
 
 import java.util.List;
 
@@ -19,11 +20,11 @@ public interface MealService {
     Call<List<Meal>> getAll();
 
     @POST("/meals")
-    Call<Meal> save(@Body Meal meal);
+    Call<Void> save(@Body Meal meal);
 
     @Multipart
-    @POST("/meals/upload")
-    Call<String> upload(
-            @Part("myfile\"; filename=\"image.png\" ") RequestBody file,
-            @Part("description") String description);
+    @POST("/meals/images/upload")
+    Call<ResponseBody> upload(
+            @Part("file\"; filename=\"image.jpg\" ") RequestBody file,
+            @Part("name") RequestBody name);
 }

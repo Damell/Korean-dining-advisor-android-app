@@ -30,6 +30,7 @@ import com.danielchabr.koreandiningadvisorapp.util.ImageHandler;
 import com.danielchabr.koreandiningadvisorapp.util.MemoryCache;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.ResponseBody;
 
 import org.parceler.Parcels;
 
@@ -61,7 +62,7 @@ public class InsertMeal extends AppCompatActivity {
         setContentView(R.layout.activity_insert_meal);
 
         meal = new Meal();
-        Button chooseImageButton = (Button) findViewById(R.id.choose_photo_button);
+        final Button chooseImageButton = (Button) findViewById(R.id.choose_photo_button);
         chooseImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,14 +96,31 @@ public class InsertMeal extends AppCompatActivity {
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 } else {
-                    Call call = mealService.upload(RequestBody.create(MediaType.parse("multipart/form-data"), meal.getFile()), "desc");
+                    RequestBody image = RequestBody.create(MediaType.parse("image/*"), meal.getFile());
+                    RequestBody filename = RequestBody.create(MediaType.parse("text/plain"), "test.jpg");
+                    Call call = mealService.upload(image, filename);
                     Log.v("Upload", "Image file uploading start");
-                    call.enqueue(new Callback() {
+                    call.enqueue(new Callback<ResponseBody>() {
                         @Override
-                        public void onResponse(Response response, Retrofit retrofit) {
-                            Log.v("Upload", "success");
-                            uploadImageButton.setText("Uploaded");
-                            uploadImageButton.setEnabled(false);
+                        public void onResponse(Response<ResponseBody> response, Retrofit retrofit) {
+                            if (response.isSuccess()) {
+                                try {
+                                    String url = response.body().string();
+                                    meal.setPhotoUrl(url);
+                                    Log.v("Upload", "success");
+                                    Log.v("Upload", "url: " + url);
+                                    uploadImageButton.setText("Uploaded");
+
+                                    uploadImageButton.setEnabled(false);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Log.v("Upload", "failure: " + response.errorBody());
+                                Log.v("Upload", "failure: " + response.message());
+                                Log.v("Upload", "failure: " + response.code());
+                                Log.v("Upload", "failure: " + response.body());
+                            }
                         }
 
                         @Override
@@ -150,12 +168,8 @@ public class InsertMeal extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_insert) {
             EditText koreanName = (EditText) findViewById(R.id.inputKoreanName);
             EditText englishName = (EditText) findViewById(R.id.inputEnglishName);
@@ -187,12 +201,30 @@ public class InsertMeal extends AppCompatActivity {
             meal.setSpicyGrade(spinner.getSelectedItemPosition() - 1);
 
             MealClient mealClient = new MealClient();
-            mealClient.getMealService().save(meal);
+            Call call = mealClient.getMealService().save(meal);
+            call.enqueue(new Callback() {
+                @Override
+                public void onResponse(Response response, Retrofit retrofit) {
+                    if (response.isSuccess()) {
+                        Log.v("CreateMeal", "successfully created meal");
+                        Log.v("CreateMeal", "code: " + response.code());
 
-            Intent showDashboard = new Intent();
-            showDashboard.putExtra("createdMeal", Parcels.wrap(meal));
-            setResult(Activity.RESULT_OK, showDashboard);
-            finish();
+                        Intent showDashboard = new Intent();
+                        showDashboard.putExtra("createdMeal", Parcels.wrap(meal));
+                        setResult(Activity.RESULT_OK, showDashboard);
+                        finish();
+                    } else {
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    Log.v("CreateMeal", "error creating meal");
+                    Log.v("CreateMeal", t.getMessage());
+                }
+            });
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -212,7 +244,7 @@ public class InsertMeal extends AppCompatActivity {
 
                 MemoryCache memoryCache = new MemoryCache();
                 memoryCache.put(meal.getUuid(), bitmap.copy(bitmap.getConfig(), true));
-                meal.savePhoto(this, bitmap.copy(bitmap.getConfig(), true));
+                meal.savePhoto(this, ImageHandler.scaleDownBitmap(this, bitmap.copy(bitmap.getConfig(), true), 20));
                 uploadImageButton.setEnabled(true);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

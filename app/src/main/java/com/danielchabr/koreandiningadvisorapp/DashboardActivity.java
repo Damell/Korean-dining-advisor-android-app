@@ -130,7 +130,7 @@ public class DashboardActivity extends AppCompatActivity {
             public void onResponse(retrofit.Response<List<Meal>> response, Retrofit retrofit) {
                 Log.v("Dashboard", "received response");
                 Log.v("Dashboard", "" + response.body());
-                //meals.clear();
+                meals.clear();
                 meals.addAll(new ArrayList<>(response.body()));
                 mealAdapter.notifyDataSetChanged();
                 //mealListView.deferNotifyDataSetChanged();

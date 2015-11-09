@@ -26,8 +26,8 @@ public class Meal {
     String englishName;
     String transliteratedName;
     String description;
-    byte[] photo;
     Uri photoUri;
+    String photoUrl;
     String id;
     File file;
     List<String> ingredients;
@@ -186,5 +186,14 @@ public class Meal {
 
     public void setTransliteratedName(String transliteratedName) {
         this.transliteratedName = transliteratedName;
+    }
+
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 }
