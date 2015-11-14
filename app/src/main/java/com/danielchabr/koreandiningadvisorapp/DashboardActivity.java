@@ -225,7 +225,7 @@ class MealAdapter extends ArrayAdapter<Meal> implements Filterable {
         koreanName.setText(meal.getKoreanName());
         englishName.setText(meal.getEnglishName());
 
-        if (meal.hasPhoto()) {
+        if (meal.hasPhotoLocal()) {
             MemoryCache memoryCache = new MemoryCache();
             Bitmap bitmap = memoryCache.get(meal.getUuid());
             if (bitmap == null) {
@@ -234,6 +234,8 @@ class MealAdapter extends ArrayAdapter<Meal> implements Filterable {
             } else {
                 photo.setImageBitmap(bitmap);
             }
+        } else if (meal.hasPhoto()) {
+            Picasso.with(getContext()).load(MealClient.getImageUrl() + meal.getPhotoUrl()).into(photo);
         } else {
             photo.setImageResource(R.drawable.logo);
         }

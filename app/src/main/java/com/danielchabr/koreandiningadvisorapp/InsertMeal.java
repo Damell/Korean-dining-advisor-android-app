@@ -173,9 +173,11 @@ public class InsertMeal extends AppCompatActivity {
         if (id == R.id.action_insert) {
             EditText koreanName = (EditText) findViewById(R.id.inputKoreanName);
             EditText englishName = (EditText) findViewById(R.id.inputEnglishName);
+            EditText transliteratedName = (EditText) findViewById(R.id.transliteratedName);
             EditText description = (EditText) findViewById(R.id.description_edit);
             meal.setKoreanName(koreanName.getText().toString());
             meal.setEnglishName(englishName.getText().toString());
+            meal.setTransliteratedName(transliteratedName.getText().toString());
             meal.setDescription(description.getText().toString());
             if (meal.getKoreanName().trim().isEmpty()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -214,7 +216,10 @@ public class InsertMeal extends AppCompatActivity {
                         setResult(Activity.RESULT_OK, showDashboard);
                         finish();
                     } else {
-
+                        Log.v("CreateMeal", "response: " + response.body());
+                        Log.v("CreateMeal", "response: " + response.errorBody().toString());
+                        Log.v("CreateMeal", "response: " + response.message());
+                        Log.v("CreateMeal", "code: " + response.code());
                     }
                 }
 
@@ -244,7 +249,7 @@ public class InsertMeal extends AppCompatActivity {
 
                 MemoryCache memoryCache = new MemoryCache();
                 memoryCache.put(meal.getUuid(), bitmap.copy(bitmap.getConfig(), true));
-                meal.savePhoto(this, ImageHandler.scaleDownBitmap(this, bitmap.copy(bitmap.getConfig(), true), 20));
+                meal.savePhoto(this, ImageHandler.scaleDownBitmap(this, bitmap.copy(bitmap.getConfig(), true), 200));
                 uploadImageButton.setEnabled(true);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

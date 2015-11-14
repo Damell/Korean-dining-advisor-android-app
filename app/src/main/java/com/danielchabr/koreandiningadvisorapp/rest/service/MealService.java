@@ -27,4 +27,5 @@ public interface MealService {
     Call<ResponseBody> upload(
             @Part("file\"; filename=\"image.jpg\" ") RequestBody file,
             @Part("name") RequestBody name);
+
 }

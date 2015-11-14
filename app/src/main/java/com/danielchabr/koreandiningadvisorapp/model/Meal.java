@@ -19,23 +19,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@JsonIgnoreProperties({"id", "mealPic", "rating"})
+@JsonIgnoreProperties({"id", "uuid", "file"})
 @Parcel
 public class Meal {
     String koreanName;
     String englishName;
     String transliteratedName;
     String description;
-    Uri photoUri;
     String photoUrl;
-    String id;
-    File file;
     List<String> ingredients;
     List<String> category;
-    String uuid = UUID.randomUUID().toString();
     int rating;
     int spicyGrade;
     int viewNum;
+
+    String id;
+    String uuid = UUID.randomUUID().toString();
+    File file;
+    Uri photoUri;
 
     public Meal() { /*Required empty bean constructor*/ }
 
@@ -120,8 +121,12 @@ public class Meal {
         }
     }
 
-    public boolean hasPhoto() {
+    public boolean hasPhotoLocal() {
         return photoUri != null;
+    }
+
+    public boolean hasPhoto() {
+        return photoUrl != null && !photoUrl.isEmpty();
     }
 
     public String getUuid() {
