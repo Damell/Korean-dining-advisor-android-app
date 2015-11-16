@@ -12,6 +12,7 @@ import retrofit.http.GET;
 import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.Part;
+import retrofit.http.Path;
 
 
 public interface MealService {
@@ -28,4 +29,9 @@ public interface MealService {
             @Part("file\"; filename=\"image.jpg\" ") RequestBody file,
             @Part("name") RequestBody name);
 
+    @GET("/transliterate/{koreanName}")
+    Call<ResponseBody> transliterate(@Path("koreanName") String koreanName);
+
+    @GET("/translate/{koreanName}")
+    Call<ResponseBody> translate(@Path("koreanName") String koreanName);
 }

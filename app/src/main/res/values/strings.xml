@@ -26,6 +26,8 @@
     <string name="category">Category</string>
     <string name="addIngredient">Add ingredient</string>
     <string name="unknown">Unknown</string>
+    <string name="generateTransliteration">Generate transliteration</string>
+    <string name="generateTranslation">Generate translation</string>
 
     <string-array name="spiciness_levels">
         <item></item>

@@ -52,17 +52,29 @@ public class InsertMeal extends AppCompatActivity {
     private MealService mealService;
     private Meal meal;
     private Button uploadImageButton;
+    private Button transliterateButton;
+    private Button translateButton;
     private ArrayList<String> ingredients;
     private LinearLayout ingredientsView;
     private LinearLayout categoriesView;
+    private EditText koreanName;
+    private EditText englishName;
+    private EditText transliteratedName;
+    private EditText description;
+    private MealClient mealClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert_meal);
 
+        mealClient = new MealClient();
         meal = new Meal();
-        final Button chooseImageButton = (Button) findViewById(R.id.choose_photo_button);
+        koreanName = (EditText) findViewById(R.id.inputKoreanName);
+        englishName = (EditText) findViewById(R.id.inputEnglishName);
+        transliteratedName = (EditText) findViewById(R.id.transliteratedName);
+        description = (EditText) findViewById(R.id.description_edit);
+        Button chooseImageButton = (Button) findViewById(R.id.choose_photo_button);
         chooseImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,7 +95,7 @@ public class InsertMeal extends AppCompatActivity {
             }
         });
         mealPhotoView = (ImageView) findViewById(R.id.insert_photo_view);
-        mealService = new MealClient().getMealService();
+        mealService = mealClient.getMealService();
         uploadImageButton = (Button) findViewById(R.id.upload_photo_button);
         uploadImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,6 +169,84 @@ public class InsertMeal extends AppCompatActivity {
                 }
             }
         });
+        transliterateButton = (Button) findViewById(R.id.generateTransliteration);
+        transliterateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String TAG = "GenerateTransliteration";
+                if (koreanName.getText().toString().isEmpty()) {
+                    Log.v(TAG, "No korean name");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
+                    builder.setMessage("No string to transliterate")
+                            .setTitle("No string to transliterate");
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    Call<ResponseBody> call = mealClient.getMealService().transliterate(koreanName.getText().toString());
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Response<ResponseBody> response, Retrofit retrofit) {
+                            if (response.isSuccess()) {
+                                try {
+                                    transliteratedName.setText(response.body().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Log.v(TAG, "failure: " + response.errorBody());
+                                Log.v(TAG, "failure: " + response.message());
+                                Log.v(TAG, "failure: " + response.code());
+                                Log.v(TAG, "failure: " + response.body());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+                            Log.e("Upload", t.getMessage());
+                        }
+                    });
+                }
+            }
+        });
+        translateButton = (Button) findViewById(R.id.generateTranslation);
+        translateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String TAG = "GenerateTranslation";
+                if (koreanName.getText().toString().isEmpty()) {
+                    Log.v(TAG, "No korean name");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
+                    builder.setMessage("No string to transliterate")
+                            .setTitle("No string to transliterate");
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    Call<ResponseBody> call = mealClient.getMealService().translate(koreanName.getText().toString());
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Response<ResponseBody> response, Retrofit retrofit) {
+                            if (response.isSuccess()) {
+                                try {
+                                    englishName.setText(response.body().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Log.v(TAG, "failure: " + response.errorBody());
+                                Log.v(TAG, "failure: " + response.message());
+                                Log.v(TAG, "failure: " + response.code());
+                                Log.v(TAG, "failure: " + response.body());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+                            Log.e("Upload", t.getMessage());
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
@@ -171,10 +261,6 @@ public class InsertMeal extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_insert) {
-            EditText koreanName = (EditText) findViewById(R.id.inputKoreanName);
-            EditText englishName = (EditText) findViewById(R.id.inputEnglishName);
-            EditText transliteratedName = (EditText) findViewById(R.id.transliteratedName);
-            EditText description = (EditText) findViewById(R.id.description_edit);
             meal.setKoreanName(koreanName.getText().toString());
             meal.setEnglishName(englishName.getText().toString());
             meal.setTransliteratedName(transliteratedName.getText().toString());
@@ -202,7 +288,6 @@ public class InsertMeal extends AppCompatActivity {
             Spinner spinner = (Spinner) findViewById(R.id.spiciness);
             meal.setSpicyGrade(spinner.getSelectedItemPosition() - 1);
 
-            MealClient mealClient = new MealClient();
             Call call = mealClient.getMealService().save(meal);
             call.enqueue(new Callback() {
                 @Override

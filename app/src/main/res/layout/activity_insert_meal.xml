@@ -53,7 +53,14 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/transliteratedName"
                     android:labelFor="@string/transliteration"
-                    android:inputType="text"
+                    android:inputType="text" />
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/generateTransliteration"
+                    android:id="@+id/generateTransliteration"
                     android:layout_marginBottom="@dimen/activity_vertical_margin" />
 
                 <TextView
@@ -68,6 +75,15 @@
                     android:id="@+id/inputEnglishName"
                     android:labelFor="@string/english_title"
                     android:inputType="text" />
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/generateTranslation"
+                    android:id="@+id/generateTranslation"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin" />
 
             </LinearLayout>
 
