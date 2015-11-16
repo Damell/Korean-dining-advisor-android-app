@@ -27,7 +27,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
-import com.danielchabr.koreandiningadvisorapp.rest.MealClient;
+import com.danielchabr.koreandiningadvisorapp.rest.ApiClient;
 import com.danielchabr.koreandiningadvisorapp.rest.service.MealService;
 import com.danielchabr.koreandiningadvisorapp.util.FileCache;
 import com.danielchabr.koreandiningadvisorapp.util.MemoryCache;
@@ -54,7 +54,13 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mealService = new MealClient().getMealService();
+
+        //authenticate
+        Intent authenticate = new Intent(DashboardActivity.this, LoginActivity.class);
+        startActivity(authenticate);
+
+
+        mealService = new ApiClient().getMealService();
         setContentView(R.layout.activity_dashboard);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -241,6 +247,7 @@ class MealAdapter extends ArrayAdapter<Meal> implements Filterable {
         englishName.setText(meal.getEnglishName());
 
         if (meal.hasPhotoLocal()) {
+            Log.v("GetView", "Has photo local");
             MemoryCache memoryCache = new MemoryCache();
             Bitmap bitmap = memoryCache.get(meal.getUuid());
             if (bitmap == null) {
@@ -250,8 +257,10 @@ class MealAdapter extends ArrayAdapter<Meal> implements Filterable {
                 photo.setImageBitmap(bitmap);
             }
         } else if (meal.hasPhoto()) {
-            Picasso.with(getContext()).load(MealClient.getImageUrl() + meal.getPhotoUrl()).into(photo);
+            Log.v("GetView", "Loading over picasso with url: " + ApiClient.getImageUrl() + meal.getPhotoUrl());
+            Picasso.with(getContext()).load(ApiClient.getImageUrl() + meal.getPhotoUrl()).into(photo);
         } else {
+            Log.v("GetView", "No photo to load");
             photo.setImageResource(R.drawable.logo);
         }
         // Return the completed view to render on screen

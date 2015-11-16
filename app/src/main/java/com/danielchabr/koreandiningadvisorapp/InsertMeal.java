@@ -23,7 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
-import com.danielchabr.koreandiningadvisorapp.rest.MealClient;
+import com.danielchabr.koreandiningadvisorapp.rest.ApiClient;
 import com.danielchabr.koreandiningadvisorapp.rest.service.MealService;
 import com.danielchabr.koreandiningadvisorapp.util.Consts;
 import com.danielchabr.koreandiningadvisorapp.util.ImageHandler;
@@ -61,14 +61,14 @@ public class InsertMeal extends AppCompatActivity {
     private EditText englishName;
     private EditText transliteratedName;
     private EditText description;
-    private MealClient mealClient;
+    private ApiClient apiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert_meal);
 
-        mealClient = new MealClient();
+        apiClient = new ApiClient();
         meal = new Meal();
         koreanName = (EditText) findViewById(R.id.inputKoreanName);
         englishName = (EditText) findViewById(R.id.inputEnglishName);
@@ -95,7 +95,7 @@ public class InsertMeal extends AppCompatActivity {
             }
         });
         mealPhotoView = (ImageView) findViewById(R.id.insert_photo_view);
-        mealService = mealClient.getMealService();
+        mealService = apiClient.getMealService();
         uploadImageButton = (Button) findViewById(R.id.upload_photo_button);
         uploadImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,7 +187,7 @@ public class InsertMeal extends AppCompatActivity {
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 } else {
-                    Call<ResponseBody> call = mealClient.getMealService().transliterate(koreanName.getText().toString());
+                    Call<ResponseBody> call = apiClient.getMealService().transliterate(koreanName.getText().toString());
                     call.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Response<ResponseBody> response, Retrofit retrofit) {
@@ -231,7 +231,7 @@ public class InsertMeal extends AppCompatActivity {
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 } else {
-                    Call<ResponseBody> call = mealClient.getMealService().translate(koreanName.getText().toString());
+                    Call<ResponseBody> call = apiClient.getMealService().translate(koreanName.getText().toString());
                     call.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Response<ResponseBody> response, Retrofit retrofit) {
@@ -303,7 +303,7 @@ public class InsertMeal extends AppCompatActivity {
             Spinner spinner = (Spinner) findViewById(R.id.spiciness);
             meal.setSpicyGrade(spinner.getSelectedItemPosition() - 1);
 
-            Call call = mealClient.getMealService().save(meal);
+            Call call = apiClient.getMealService().save(meal);
             call.enqueue(new Callback() {
                 @Override
                 public void onResponse(Response response, Retrofit retrofit) {

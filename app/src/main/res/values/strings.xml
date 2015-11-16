@@ -28,6 +28,7 @@
     <string name="unknown">Unknown</string>
     <string name="generateTransliteration">Generate transliteration</string>
     <string name="generateTranslation">Generate translation</string>
+    <string name="noAccount">Do not have an account yet? You can sign up for free</string>
 
     <string-array name="spiciness_levels">
         <item></item>

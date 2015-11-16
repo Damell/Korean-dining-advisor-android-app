@@ -11,7 +11,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
-import com.danielchabr.koreandiningadvisorapp.rest.MealClient;
+import com.danielchabr.koreandiningadvisorapp.rest.ApiClient;
 import com.danielchabr.koreandiningadvisorapp.util.MemoryCache;
 import com.squareup.picasso.Picasso;
 
@@ -61,7 +61,7 @@ public class DetailActivity extends AppCompatActivity {
                 photo.setImageBitmap(bitmap);
             }
         } else if (meal.hasPhoto()) {
-            Picasso.with(this).load(MealClient.getImageUrl() + meal.getPhotoUrl()).into(photo);
+            Picasso.with(this).load(ApiClient.getImageUrl() + meal.getPhotoUrl()).into(photo);
         }
     }
 
