@@ -17,6 +17,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+// parts taken from https://github.com/Ink/filepicker-android/blob/master/filepicker-library/src/io/filepicker/utils/FilesUtils.java
 public class ImageHandler {
 
     public static Bitmap getBitmap(final Context context, final Uri uri, final int MAX_IMAGE_DIMENSION) throws IOException {
@@ -93,7 +94,6 @@ public class ImageHandler {
                     return Environment.getExternalStorageDirectory() + "/" + split[1];
                 }
 
-                // TODO handle non-primary volumes
             }
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {

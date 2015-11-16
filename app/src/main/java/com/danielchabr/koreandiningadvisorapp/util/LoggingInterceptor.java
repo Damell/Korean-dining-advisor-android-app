@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import okio.Buffer;
 
+// taken from https://gist.github.com/erickok/e371a9e0b9e702ed441d
 public class LoggingInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
