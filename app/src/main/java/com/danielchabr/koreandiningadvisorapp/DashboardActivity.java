@@ -1,6 +1,7 @@
 package com.danielchabr.koreandiningadvisorapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -123,22 +124,36 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void loadMeals (MealService mealService, final ArrayList<Meal> meals, final ArrayAdapter<Meal> mealAdapter) {
+        final String TAG = "GetMeals";
         Call<List<Meal>> call = mealService.getAll();
-        Log.v("Dashboard", "Sent request");
+        Log.v(TAG, "Sent request");
         call.enqueue(new Callback<List<Meal>>() {
             @Override
             public void onResponse(retrofit.Response<List<Meal>> response, Retrofit retrofit) {
-                Log.v("Dashboard", "received response");
-                Log.v("Dashboard", "" + response.body());
-                meals.clear();
-                meals.addAll(new ArrayList<>(response.body()));
-                mealAdapter.notifyDataSetChanged();
-                //mealListView.deferNotifyDataSetChanged();
+                if (response.isSuccess()) {
+                    Log.v(TAG, "received response");
+                    Log.v(TAG, "" + response.body());
+                    meals.clear();
+                    meals.addAll(new ArrayList<>(response.body()));
+                    mealAdapter.notifyDataSetChanged();
+                    //mealListView.deferNotifyDataSetChanged();
+                } else {
+                    Log.v(TAG, "failure: " + response.errorBody());
+                    Log.v(TAG, "failure: " + response.message());
+                    Log.v(TAG, "failure: " + response.code());
+                    Log.v(TAG, "failure: " + response.body());
+                }
             }
+
             @Override
             public void onFailure(Throwable t) {
-                Log.v("Dashboard", "error " + t.getMessage());
-                Log.v("Dashboard", "error " + t.getStackTrace());
+                Log.v(TAG, "error " + t.getMessage());
+                Log.v(TAG, "error " + t.getStackTrace());
+                AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+                builder.setMessage("Network error")
+                        .setTitle("No network connection");
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }

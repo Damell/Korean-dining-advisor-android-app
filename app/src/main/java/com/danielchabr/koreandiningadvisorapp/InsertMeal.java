@@ -102,7 +102,7 @@ public class InsertMeal extends AppCompatActivity {
             public void onClick(View view) {
                 if (meal.getFile() == null) {
                     Log.v("Upload", "You have not chosen any image to upload");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
                     builder.setMessage("You have not chosen any image to upload")
                             .setTitle("No image to upload");
                     AlertDialog dialog = builder.create();
@@ -138,6 +138,11 @@ public class InsertMeal extends AppCompatActivity {
                         @Override
                         public void onFailure(Throwable t) {
                             Log.e("Upload", t.getMessage());
+                            AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
+                            builder.setMessage("Network error")
+                                    .setTitle("No network connection");
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
                         }
                     });
                 }
@@ -176,7 +181,7 @@ public class InsertMeal extends AppCompatActivity {
                 final String TAG = "GenerateTransliteration";
                 if (koreanName.getText().toString().isEmpty()) {
                     Log.v(TAG, "No korean name");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
                     builder.setMessage("No string to transliterate")
                             .setTitle("No string to transliterate");
                     AlertDialog dialog = builder.create();
@@ -203,6 +208,11 @@ public class InsertMeal extends AppCompatActivity {
                         @Override
                         public void onFailure(Throwable t) {
                             Log.e("Upload", t.getMessage());
+                            AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
+                            builder.setMessage("Network error")
+                                    .setTitle("No network connection");
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
                         }
                     });
                 }
@@ -215,7 +225,7 @@ public class InsertMeal extends AppCompatActivity {
                 final String TAG = "GenerateTranslation";
                 if (koreanName.getText().toString().isEmpty()) {
                     Log.v(TAG, "No korean name");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
                     builder.setMessage("No string to transliterate")
                             .setTitle("No string to transliterate");
                     AlertDialog dialog = builder.create();
@@ -242,6 +252,11 @@ public class InsertMeal extends AppCompatActivity {
                         @Override
                         public void onFailure(Throwable t) {
                             Log.e("Upload", t.getMessage());
+                            AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
+                            builder.setMessage("Network error")
+                                    .setTitle("No network connection");
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
                         }
                     });
                 }
@@ -266,7 +281,7 @@ public class InsertMeal extends AppCompatActivity {
             meal.setTransliteratedName(transliteratedName.getText().toString());
             meal.setDescription(description.getText().toString());
             if (meal.getKoreanName().trim().isEmpty()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
                 builder.setMessage("Korean name of a dish needs to be filled")
                         .setTitle("Missing values");
                 AlertDialog dialog = builder.create();
@@ -312,6 +327,11 @@ public class InsertMeal extends AppCompatActivity {
                 public void onFailure(Throwable t) {
                     Log.v("CreateMeal", "error creating meal");
                     Log.v("CreateMeal", t.getMessage());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
+                    builder.setMessage("Network error")
+                            .setTitle("No network connection");
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
             });
 
