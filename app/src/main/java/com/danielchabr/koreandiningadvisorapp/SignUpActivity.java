@@ -126,7 +126,8 @@ public class SignUpActivity extends AppCompatActivity {
             call.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Response response, Retrofit retrofit) {
-                    progress.dismiss();
+                    if (!SignUpActivity.this.isFinishing() && progress.isShowing())
+                        progress.dismiss();
                     if (response.isSuccess()) {
                         Log.v(TAG, "successfully created user");
                         Log.v(TAG, "code: " + response.code());
@@ -142,9 +143,11 @@ public class SignUpActivity extends AppCompatActivity {
                         Log.v(TAG, "code: " + response.code());
                     }
                 }
+
                 @Override
                 public void onFailure(Throwable t) {
-                    progress.dismiss();
+                    if (!SignUpActivity.this.isFinishing() && progress.isShowing())
+                        progress.dismiss();
                     Log.v(TAG, "error creating user");
                     Log.v(TAG, t.getMessage());
                     AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
@@ -154,9 +157,6 @@ public class SignUpActivity extends AppCompatActivity {
                     dialog.show();
                 }
             });
-            Intent showDashboard = new Intent();
-            setResult(Activity.RESULT_OK, showDashboard);
-            finish();
         }
     }
 

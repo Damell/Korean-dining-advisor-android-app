@@ -126,7 +126,8 @@ public class InsertMealActivity extends AppCompatActivity {
                     call.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Response<ResponseBody> response, Retrofit retrofit) {
-                            progress.dismiss();
+                            if (!InsertMealActivity.this.isFinishing() && progress.isShowing())
+                                progress.dismiss();
                             if (response.isSuccess()) {
                                 try {
                                     String url = response.body().string();
@@ -149,7 +150,8 @@ public class InsertMealActivity extends AppCompatActivity {
 
                         @Override
                         public void onFailure(Throwable t) {
-                            progress.dismiss();
+                            if (!InsertMealActivity.this.isFinishing() && progress.isShowing())
+                                progress.dismiss();
                             Log.e("Upload", t.getMessage());
                             AlertDialog.Builder builder = new AlertDialog.Builder(InsertMealActivity.this);
                             builder.setMessage("Network error")
@@ -332,7 +334,8 @@ public class InsertMealActivity extends AppCompatActivity {
             call.enqueue(new Callback() {
                 @Override
                 public void onResponse(Response response, Retrofit retrofit) {
-                    progress.dismiss();
+                    if (!InsertMealActivity.this.isFinishing() && progress.isShowing())
+                        progress.dismiss();
                     if (response.isSuccess()) {
                         Log.v("CreateMeal", "successfully created meal");
                         Log.v("CreateMeal", "code: " + response.code());
@@ -351,7 +354,8 @@ public class InsertMealActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Throwable t) {
-                    progress.dismiss();
+                    if (!InsertMealActivity.this.isFinishing() && progress.isShowing())
+                        progress.dismiss();
                     Log.v("CreateMeal", "error creating meal");
                     Log.v("CreateMeal", t.getMessage());
                     AlertDialog.Builder builder = new AlertDialog.Builder(InsertMealActivity.this);

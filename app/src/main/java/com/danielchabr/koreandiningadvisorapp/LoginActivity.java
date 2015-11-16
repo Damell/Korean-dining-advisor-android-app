@@ -80,17 +80,20 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CREATE_USER_CODE && resultCode == Activity.RESULT_OK) {
-            user = Parcels.unwrap(data.getExtras().getParcelable("user"));
+            Bundle bundle = data.getExtras();
+            if (bundle != null) {
+                user = Parcels.unwrap(bundle.getParcelable("user"));
 
-            SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putBoolean("authenticated", true);
-            editor.commit();
+                SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putBoolean("authenticated", true);
+                editor.commit();
 
-            Intent showDashboard = new Intent(LoginActivity.this, DashboardActivity.class);
-            showDashboard.putExtra("user", Parcels.wrap(user));
-            startActivity(showDashboard);
-            finish();
+                Intent showDashboard = new Intent(LoginActivity.this, DashboardActivity.class);
+                showDashboard.putExtra("user", Parcels.wrap(user));
+                startActivity(showDashboard);
+                finish();
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -145,7 +148,8 @@ public class LoginActivity extends AppCompatActivity {
             call.enqueue(new Callback<Boolean>() {
                 @Override
                 public void onResponse(Response response, Retrofit retrofit) {
-                    progress.dismiss();
+                    if (!LoginActivity.this.isFinishing() && progress.isShowing())
+                        progress.dismiss();
                     if (response.isSuccess() && (boolean) response.body()) {
                         Log.v(TAG, "successfully authenticated user");
                         Log.v(TAG, "code: " + response.code());
@@ -173,7 +177,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Throwable t) {
-                    progress.dismiss();
+                    if (!LoginActivity.this.isFinishing() && progress.isShowing())
+                        progress.dismiss();
                     Log.v(TAG, "error authenticating user");
                     Log.v(TAG, t.getMessage());
                     AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);

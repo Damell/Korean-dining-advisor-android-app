@@ -127,7 +127,8 @@ public class DetailActivity extends AppCompatActivity {
             call.enqueue(new Callback() {
                 @Override
                 public void onResponse(Response response, Retrofit retrofit) {
-                    progress.dismiss();
+                    if (!DetailActivity.this.isFinishing() && progress.isShowing())
+                        progress.dismiss();
                     if (response.isSuccess()) {
                         Log.v(TAG, "code: " + response.code());
 
@@ -144,7 +145,8 @@ public class DetailActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Throwable t) {
-                    progress.dismiss();
+                    if (!DetailActivity.this.isFinishing() && progress.isShowing())
+                        progress.dismiss();
                     Log.v(TAG, "error");
                     Log.v(TAG, t.getMessage());
                     AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);

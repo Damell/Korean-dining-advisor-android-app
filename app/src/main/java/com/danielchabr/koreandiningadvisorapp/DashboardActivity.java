@@ -161,7 +161,8 @@ public class DashboardActivity extends AppCompatActivity {
         call.enqueue(new Callback<List<Meal>>() {
             @Override
             public void onResponse(retrofit.Response<List<Meal>> response, Retrofit retrofit) {
-                progress.dismiss();
+                if (!DashboardActivity.this.isFinishing() && progress.isShowing())
+                    progress.dismiss();
                 if (response.isSuccess()) {
                     Log.v(TAG, "received response");
                     Log.v(TAG, "" + response.body());
@@ -179,7 +180,8 @@ public class DashboardActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Throwable t) {
-                progress.dismiss();
+                if (!DashboardActivity.this.isFinishing() && progress.isShowing())
+                    progress.dismiss();
                 Log.v(TAG, "error " + t.getMessage());
                 Log.v(TAG, "error " + t.getStackTrace());
                 AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);

@@ -371,7 +371,8 @@ public class EditMealActivity extends AppCompatActivity {
             call.enqueue(new Callback() {
                 @Override
                 public void onResponse(Response response, Retrofit retrofit) {
-                    progress.dismiss();
+                    if (!EditMealActivity.this.isFinishing() && progress.isShowing())
+                        progress.dismiss();
                     if (response.isSuccess()) {
                         Log.v(TAG, "code: " + response.code());
 
@@ -389,7 +390,8 @@ public class EditMealActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Throwable t) {
-                    progress.dismiss();
+                    if (!EditMealActivity.this.isFinishing() && progress.isShowing())
+                        progress.dismiss();
                     Log.v(TAG, "error");
                     Log.v(TAG, t.getMessage());
                     AlertDialog.Builder builder = new AlertDialog.Builder(EditMealActivity.this);
