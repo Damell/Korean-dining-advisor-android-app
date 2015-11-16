@@ -21,7 +21,8 @@ public class LoggingInterceptor implements Interceptor {
                 request.url(), chain.connection(), request.headers());
         Log.d("TRAFFIC", String.format("Sending request %s on %s%n%s",
                 request.url(), chain.connection(), request.headers()));
-        if (request.method().compareToIgnoreCase("post") == 0) {
+        if (request.method().compareToIgnoreCase("post") == 0
+                || request.method().compareToIgnoreCase("put") == 0) {
             requestLog = bodyToString(request);
         }
         Log.d("TRAFFIC", "request" + requestLog);

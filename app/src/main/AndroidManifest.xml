@@ -45,7 +45,15 @@
                 android:value=".DashboardActivity" />
         </activity>
         <activity
-            android:name=".InsertMeal"
+            android:name=".EditMealActivity"
+            android:label="@string/title_activity_detail"
+            android:parentActivityName=".DetailActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".EditMealActivity" />
+        </activity>
+        <activity
+            android:name=".InsertMealActivity"
             android:label="@string/title_activity_insert_meal"
             android:parentActivityName=".DashboardActivity" >
             <meta-data

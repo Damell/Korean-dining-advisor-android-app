@@ -2,6 +2,7 @@ package com.danielchabr.koreandiningadvisorapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,8 @@ import com.danielchabr.koreandiningadvisorapp.model.User;
 import com.danielchabr.koreandiningadvisorapp.rest.ApiClient;
 import com.danielchabr.koreandiningadvisorapp.rest.service.UserService;
 
+import org.parceler.Parcels;
+
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -33,6 +36,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText mEmailView;
     private EditText mUsernameView;
     private EditText mPasswordView;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +111,7 @@ public class SignUpActivity extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
-            User user = new User();
+            user = new User();
             user.setUsername(username);
             user.setEmail(email);
             user.setPassword(password);
@@ -115,15 +119,21 @@ public class SignUpActivity extends AppCompatActivity {
             final String TAG = "CreateUser";
             UserService userService = new ApiClient().getUserService();
             Call<Void> call = userService.create(user);
+            final ProgressDialog progress = new ProgressDialog(this);
+            progress.setTitle("Loading");
+            progress.setMessage("Wait while loading...");
+            progress.show();
             call.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Response response, Retrofit retrofit) {
+                    progress.dismiss();
                     if (response.isSuccess()) {
                         Log.v(TAG, "successfully created user");
                         Log.v(TAG, "code: " + response.code());
 
-                        Intent showDashboard = new Intent();
-                        setResult(Activity.RESULT_OK, showDashboard);
+                        Intent returnUser = new Intent();
+                        returnUser.putExtra("user", Parcels.wrap(user));
+                        setResult(Activity.RESULT_OK, returnUser);
                         finish();
                     } else {
                         Log.v(TAG, "response: " + response.body());
@@ -132,9 +142,9 @@ public class SignUpActivity extends AppCompatActivity {
                         Log.v(TAG, "code: " + response.code());
                     }
                 }
-
                 @Override
                 public void onFailure(Throwable t) {
+                    progress.dismiss();
                     Log.v(TAG, "error creating user");
                     Log.v(TAG, t.getMessage());
                     AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);

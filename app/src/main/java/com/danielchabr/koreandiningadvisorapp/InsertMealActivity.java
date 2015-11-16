@@ -2,6 +2,7 @@ package com.danielchabr.koreandiningadvisorapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -36,14 +37,13 @@ import org.parceler.Parcels;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-public class InsertMeal extends AppCompatActivity {
+public class InsertMealActivity extends AppCompatActivity {
     private final int REQUEST_CODE = 5;
     private Bitmap bitmap;
     private Uri photoUri;
@@ -54,7 +54,7 @@ public class InsertMeal extends AppCompatActivity {
     private Button uploadImageButton;
     private Button transliterateButton;
     private Button translateButton;
-    private ArrayList<String> ingredients;
+    private Button clearIngredients;
     private LinearLayout ingredientsView;
     private LinearLayout categoriesView;
     private EditText koreanName;
@@ -68,6 +68,13 @@ public class InsertMeal extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert_meal);
 
+        Bundle extras = getIntent().getExtras();
+        if (savedInstanceState != null) {
+            meal = Parcels.unwrap(savedInstanceState.getParcelable("meal"));
+        } else if (extras != null) {
+            meal = Parcels.unwrap(extras.getParcelable("meal"));
+        }
+
         apiClient = new ApiClient();
         meal = new Meal();
         koreanName = (EditText) findViewById(R.id.inputKoreanName);
@@ -78,7 +85,7 @@ public class InsertMeal extends AppCompatActivity {
         chooseImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT,null);
+                Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT, null);
                 galleryIntent.setType("image/*");
                 galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
 
@@ -89,9 +96,9 @@ public class InsertMeal extends AppCompatActivity {
                 chooser.putExtra(Intent.EXTRA_INTENT, galleryIntent);
                 chooser.putExtra(Intent.EXTRA_TITLE, "title");
 
-                Intent[] intentArray =  {cameraIntent};
+                Intent[] intentArray = {cameraIntent};
                 chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
-                startActivityForResult(chooser,REQUEST_CODE);
+                startActivityForResult(chooser, REQUEST_CODE);
             }
         });
         mealPhotoView = (ImageView) findViewById(R.id.insert_photo_view);
@@ -102,7 +109,7 @@ public class InsertMeal extends AppCompatActivity {
             public void onClick(View view) {
                 if (meal.getFile() == null) {
                     Log.v("Upload", "You have not chosen any image to upload");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InsertMealActivity.this);
                     builder.setMessage("You have not chosen any image to upload")
                             .setTitle("No image to upload");
                     AlertDialog dialog = builder.create();
@@ -112,9 +119,14 @@ public class InsertMeal extends AppCompatActivity {
                     RequestBody filename = RequestBody.create(MediaType.parse("text/plain"), "test.jpg");
                     Call call = mealService.upload(image, filename);
                     Log.v("Upload", "Image file uploading start");
+                    final ProgressDialog progress = new ProgressDialog(InsertMealActivity.this);
+                    progress.setTitle("Loading");
+                    progress.setMessage("Wait while loading...");
+                    progress.show();
                     call.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Response<ResponseBody> response, Retrofit retrofit) {
+                            progress.dismiss();
                             if (response.isSuccess()) {
                                 try {
                                     String url = response.body().string();
@@ -137,8 +149,9 @@ public class InsertMeal extends AppCompatActivity {
 
                         @Override
                         public void onFailure(Throwable t) {
+                            progress.dismiss();
                             Log.e("Upload", t.getMessage());
-                            AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(InsertMealActivity.this);
                             builder.setMessage("Network error")
                                     .setTitle("No network connection");
                             AlertDialog dialog = builder.create();
@@ -148,7 +161,6 @@ public class InsertMeal extends AppCompatActivity {
                 }
             }
         });
-
         categoriesView = (LinearLayout) findViewById(R.id.categories);
         int themeId = Resources.getSystem().getIdentifier("btn_check_holo_light", "drawable", "android");
         for (String category : Consts.CATEGORIES) {
@@ -158,7 +170,6 @@ public class InsertMeal extends AppCompatActivity {
             checkBox.setText(category);
             categoriesView.addView(checkBox);
         }
-
         ingredientsView = (LinearLayout) findViewById(R.id.ingredients);
         Button addIngredientButton = (Button) findViewById(R.id.addIngredient);
         addIngredientButton.setOnClickListener(new View.OnClickListener() {
@@ -174,6 +185,13 @@ public class InsertMeal extends AppCompatActivity {
                 }
             }
         });
+        clearIngredients = (Button) findViewById(R.id.clearIngredients);
+        clearIngredients.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ingredientsView.removeAllViews();
+            }
+        });
         transliterateButton = (Button) findViewById(R.id.generateTransliteration);
         transliterateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,7 +199,7 @@ public class InsertMeal extends AppCompatActivity {
                 final String TAG = "GenerateTransliteration";
                 if (koreanName.getText().toString().isEmpty()) {
                     Log.v(TAG, "No korean name");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InsertMealActivity.this);
                     builder.setMessage("No string to transliterate")
                             .setTitle("No string to transliterate");
                     AlertDialog dialog = builder.create();
@@ -208,7 +226,7 @@ public class InsertMeal extends AppCompatActivity {
                         @Override
                         public void onFailure(Throwable t) {
                             Log.e("Upload", t.getMessage());
-                            AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(InsertMealActivity.this);
                             builder.setMessage("Network error")
                                     .setTitle("No network connection");
                             AlertDialog dialog = builder.create();
@@ -225,7 +243,7 @@ public class InsertMeal extends AppCompatActivity {
                 final String TAG = "GenerateTranslation";
                 if (koreanName.getText().toString().isEmpty()) {
                     Log.v(TAG, "No korean name");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InsertMealActivity.this);
                     builder.setMessage("No string to transliterate")
                             .setTitle("No string to transliterate");
                     AlertDialog dialog = builder.create();
@@ -252,7 +270,7 @@ public class InsertMeal extends AppCompatActivity {
                         @Override
                         public void onFailure(Throwable t) {
                             Log.e("Upload", t.getMessage());
-                            AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(InsertMealActivity.this);
                             builder.setMessage("Network error")
                                     .setTitle("No network connection");
                             AlertDialog dialog = builder.create();
@@ -275,13 +293,16 @@ public class InsertMeal extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_insert) {
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        } else if (id == R.id.action_insert) {
             meal.setKoreanName(koreanName.getText().toString());
             meal.setEnglishName(englishName.getText().toString());
             meal.setTransliteratedName(transliteratedName.getText().toString());
             meal.setDescription(description.getText().toString());
             if (meal.getKoreanName().trim().isEmpty()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(InsertMealActivity.this);
                 builder.setMessage("Korean name of a dish needs to be filled")
                         .setTitle("Missing values");
                 AlertDialog dialog = builder.create();
@@ -304,9 +325,14 @@ public class InsertMeal extends AppCompatActivity {
             meal.setSpicyGrade(spinner.getSelectedItemPosition() - 1);
 
             Call call = apiClient.getMealService().save(meal);
+            final ProgressDialog progress = new ProgressDialog(this);
+            progress.setTitle("Loading");
+            progress.setMessage("Wait while loading...");
+            progress.show();
             call.enqueue(new Callback() {
                 @Override
                 public void onResponse(Response response, Retrofit retrofit) {
+                    progress.dismiss();
                     if (response.isSuccess()) {
                         Log.v("CreateMeal", "successfully created meal");
                         Log.v("CreateMeal", "code: " + response.code());
@@ -325,9 +351,10 @@ public class InsertMeal extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Throwable t) {
+                    progress.dismiss();
                     Log.v("CreateMeal", "error creating meal");
                     Log.v("CreateMeal", t.getMessage());
-                    AlertDialog.Builder builder = new AlertDialog.Builder(InsertMeal.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InsertMealActivity.this);
                     builder.setMessage("Network error")
                             .setTitle("No network connection");
                     AlertDialog dialog = builder.create();
@@ -362,5 +389,11 @@ public class InsertMeal extends AppCompatActivity {
                 e.printStackTrace();
             }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        bundle.putParcelable("meal", Parcels.wrap(meal));
     }
 }

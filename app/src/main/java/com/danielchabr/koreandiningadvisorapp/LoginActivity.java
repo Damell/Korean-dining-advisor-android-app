@@ -2,7 +2,9 @@ package com.danielchabr.koreandiningadvisorapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -19,6 +21,8 @@ import com.danielchabr.koreandiningadvisorapp.model.User;
 import com.danielchabr.koreandiningadvisorapp.rest.ApiClient;
 import com.danielchabr.koreandiningadvisorapp.rest.service.UserService;
 
+import org.parceler.Parcels;
+
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -29,13 +33,11 @@ import retrofit.Retrofit;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "user:hello", "foo:world"
-    };
-
     // UI references.
     private EditText mUsernameView;
     private EditText mPasswordView;
+    private User user;
+    private int CREATE_USER_CODE = 13;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,9 +72,27 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent authenticate = new Intent(LoginActivity.this, SignUpActivity.class);
-                startActivity(authenticate);
+                startActivityForResult(authenticate, CREATE_USER_CODE);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CREATE_USER_CODE && resultCode == Activity.RESULT_OK) {
+            user = Parcels.unwrap(data.getExtras().getParcelable("user"));
+
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putBoolean("authenticated", true);
+            editor.commit();
+
+            Intent showDashboard = new Intent(LoginActivity.this, DashboardActivity.class);
+            showDashboard.putExtra("user", Parcels.wrap(user));
+            startActivity(showDashboard);
+            finish();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void attemptLogin() {
@@ -113,32 +133,48 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             final String TAG = "AuthenticateUser";
-            User user = new User();
+            user = new User();
             user.setUsername(username);
             user.setPassword(password);
             UserService userService = new ApiClient().getUserService();
             Call<Boolean> call = userService.authenticate(user);
+            final ProgressDialog progress = new ProgressDialog(this);
+            progress.setTitle("Loading");
+            progress.setMessage("Wait while loading...");
+            progress.show();
             call.enqueue(new Callback<Boolean>() {
                 @Override
                 public void onResponse(Response response, Retrofit retrofit) {
-                    if (response.isSuccess()) {
+                    progress.dismiss();
+                    if (response.isSuccess() && (boolean) response.body()) {
                         Log.v(TAG, "successfully authenticated user");
                         Log.v(TAG, "code: " + response.code());
 
-                        Intent showDashboard = new Intent();
-                        setResult(Activity.RESULT_OK, showDashboard);
+                        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putBoolean("authenticated", true);
+                        editor.commit();
+
+                        Intent showDashboard = new Intent(LoginActivity.this, DashboardActivity.class);
+                        showDashboard.putExtra("user", Parcels.wrap(user));
+                        startActivity(showDashboard);
                         finish();
                     } else {
                         Log.v(TAG, "response: " + response.body());
-                        Log.v(TAG, "response: " + response.errorBody().toString());
                         Log.v(TAG, "response: " + response.message());
                         Log.v(TAG, "code: " + response.code());
+                        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                        builder.setMessage("Authentication failed")
+                                .setTitle("Please try again");
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
                     }
                 }
 
                 @Override
                 public void onFailure(Throwable t) {
-                    Log.v(TAG, "error creating user");
+                    progress.dismiss();
+                    Log.v(TAG, "error authenticating user");
                     Log.v(TAG, t.getMessage());
                     AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                     builder.setMessage("Network error")
@@ -148,17 +184,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         }
-    }
-
-    private boolean authenticate(User user) {
-        for (String credential : DUMMY_CREDENTIALS) {
-            String[] pieces = credential.split(":");
-            if (pieces[0].equals(user.getUsername())) {
-                // Account exists, return true if the password matches.
-                return pieces[1].equals(user.getPassword());
-            }
-        }
-        return false;
     }
 
     private boolean isUsernameValid(String username) {

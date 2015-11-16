@@ -6,6 +6,8 @@
     <string name="action_settings">Settings</string>
     <string name="action_search">Search</string>
     <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_save">Save</string>
     <string name="action_insert">Create</string>
     <string name="action_account">Account</string>
     <string name="title_activity_detail">Detail</string>
@@ -29,6 +31,7 @@
     <string name="generateTransliteration">Generate transliteration</string>
     <string name="generateTranslation">Generate translation</string>
     <string name="noAccount">Do not have an account yet? You can sign up for free</string>
+    <string name="clearIngredients">Clear all</string>
 
     <string-array name="spiciness_levels">
         <item></item>

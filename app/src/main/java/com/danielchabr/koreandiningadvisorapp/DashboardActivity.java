@@ -2,12 +2,15 @@ package com.danielchabr.koreandiningadvisorapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,6 +30,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.danielchabr.koreandiningadvisorapp.model.Meal;
+import com.danielchabr.koreandiningadvisorapp.model.User;
 import com.danielchabr.koreandiningadvisorapp.rest.ApiClient;
 import com.danielchabr.koreandiningadvisorapp.rest.service.MealService;
 import com.danielchabr.koreandiningadvisorapp.util.FileCache;
@@ -44,6 +48,7 @@ import retrofit.Retrofit;
 
 public class DashboardActivity extends AppCompatActivity {
 
+    private User user;
     private ListView mealListView;
     private ArrayAdapter<Meal> mealAdapter;
     private ArrayList<Meal> meals;
@@ -55,10 +60,25 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //authenticate
-        Intent authenticate = new Intent(DashboardActivity.this, LoginActivity.class);
-        startActivity(authenticate);
+        Bundle extras = getIntent().getExtras();
+        // try to restore user
+        if (savedInstanceState != null) {
+            user = Parcels.unwrap(savedInstanceState.getParcelable("user"));
+        } else if (extras != null) {
+            Parcelable p = extras.getParcelable("user");
+            if (p != null) {
+                user = Parcels.unwrap(p);
+            }
+        }
 
+        // if the user is not restored start log in activity
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        if (user == null && !pref.getBoolean("authenticated", false)) {
+            //authenticate
+            Intent authenticate = new Intent(DashboardActivity.this, LoginActivity.class);
+            startActivity(authenticate);
+            finish();
+        }
 
         mealService = new ApiClient().getMealService();
         setContentView(R.layout.activity_dashboard);
@@ -127,15 +147,21 @@ public class DashboardActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
         bundle.putParcelable("meals", Parcels.wrap(meals));
+        bundle.putParcelable("user", Parcels.wrap(user));
     }
 
     private void loadMeals (MealService mealService, final ArrayList<Meal> meals, final ArrayAdapter<Meal> mealAdapter) {
         final String TAG = "GetMeals";
         Call<List<Meal>> call = mealService.getAll();
         Log.v(TAG, "Sent request");
+        final ProgressDialog progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.show();
         call.enqueue(new Callback<List<Meal>>() {
             @Override
             public void onResponse(retrofit.Response<List<Meal>> response, Retrofit retrofit) {
+                progress.dismiss();
                 if (response.isSuccess()) {
                     Log.v(TAG, "received response");
                     Log.v(TAG, "" + response.body());
@@ -153,6 +179,7 @@ public class DashboardActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Throwable t) {
+                progress.dismiss();
                 Log.v(TAG, "error " + t.getMessage());
                 Log.v(TAG, "error " + t.getStackTrace());
                 AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
@@ -180,7 +207,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add_meal) {
-            Intent insertMeal = new Intent(DashboardActivity.this, InsertMeal.class);
+            Intent insertMeal = new Intent(DashboardActivity.this, InsertMealActivity.class);
             startActivityForResult(insertMeal, INSERT_MEAL_CODE);
             return true;
         }
@@ -192,9 +219,10 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == INSERT_MEAL_CODE && resultCode == Activity.RESULT_OK) {
             Meal newMeal = Parcels.unwrap(data.getExtras().getParcelable("createdMeal"));
-            meals.add(newMeal);
-            mealAdapter.notifyDataSetChanged();
+            //meals.add(newMeal);
+            //mealAdapter.notifyDataSetChanged();
             //mealListView.deferNotifyDataSetChanged();
+            loadMeals(mealService, meals, mealAdapter);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

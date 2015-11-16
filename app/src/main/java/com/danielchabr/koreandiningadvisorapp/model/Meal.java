@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@JsonIgnoreProperties({"id", "uuid", "file"})
+@JsonIgnoreProperties({"uuid", "file"})
 @Parcel
 public class Meal {
     String koreanName;
@@ -32,8 +32,8 @@ public class Meal {
     int rating;
     int spicyGrade;
     int viewNum;
-
     String id;
+
     String uuid = UUID.randomUUID().toString();
     File file;
     Uri photoUri;
@@ -200,5 +200,9 @@ public class Meal {
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public String getId() {
+        return id;
     }
 }

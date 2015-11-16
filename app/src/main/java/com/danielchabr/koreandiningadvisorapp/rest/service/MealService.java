@@ -8,9 +8,11 @@ import java.util.List;
 
 import retrofit.Call;
 import retrofit.http.Body;
+import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.Multipart;
 import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.Part;
 import retrofit.http.Path;
 
@@ -22,6 +24,12 @@ public interface MealService {
 
     @POST("/meals")
     Call<Void> save(@Body Meal meal);
+
+    @PUT("/meals/{id}")
+    Call<Void> edit(@Path("id") String id, @Body Meal meal);
+
+    @DELETE("/meals/{id}")
+    Call<Void> delete(@Path("id") String id);
 
     @Multipart
     @POST("/meals/images/upload")
