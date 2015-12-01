@@ -53,6 +53,7 @@ public class DashboardActivity extends AppCompatActivity {
     private ArrayAdapter<Meal> mealAdapter;
     private ArrayList<Meal> meals;
     private int INSERT_MEAL_CODE = 8;
+    private int SHOW_MEAL_CODE = 13;
     private MealService mealService;
     private EditText searchInput;
 
@@ -138,7 +139,7 @@ public class DashboardActivity extends AppCompatActivity {
 
                 Intent showDetail = new Intent(DashboardActivity.this, DetailActivity.class);
                 showDetail.putExtra("selectedMeal", Parcels.wrap(selected));
-                startActivity(showDetail);
+                startActivityForResult(showDetail, SHOW_MEAL_CODE);
             }
         });
     }
@@ -220,10 +221,12 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == INSERT_MEAL_CODE && resultCode == Activity.RESULT_OK) {
-            Meal newMeal = Parcels.unwrap(data.getExtras().getParcelable("createdMeal"));
+            //Meal newMeal = Parcels.unwrap(data.getExtras().getParcelable("createdMeal"));
             //meals.add(newMeal);
             //mealAdapter.notifyDataSetChanged();
             //mealListView.deferNotifyDataSetChanged();
+            loadMeals(mealService, meals, mealAdapter);
+        } else if (requestCode == SHOW_MEAL_CODE && resultCode == Activity.RESULT_OK) {
             loadMeals(mealService, meals, mealAdapter);
         }
         super.onActivityResult(requestCode, resultCode, data);

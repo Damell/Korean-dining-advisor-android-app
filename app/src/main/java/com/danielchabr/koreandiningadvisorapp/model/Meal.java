@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import com.danielchabr.koreandiningadvisorapp.util.FileCache;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import org.parceler.Parcel;
 
@@ -32,6 +33,7 @@ public class Meal {
     int rating;
     int spicyGrade;
     int viewNum;
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     String id;
 
     String uuid = UUID.randomUUID().toString();
