@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author Daniel Chabr
+ *         Meal model
+ */
 @JsonIgnoreProperties({"uuid", "file"})
 @Parcel
 public class Meal {

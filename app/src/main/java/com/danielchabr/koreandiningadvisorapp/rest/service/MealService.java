@@ -16,7 +16,10 @@ import retrofit.http.PUT;
 import retrofit.http.Part;
 import retrofit.http.Path;
 
-
+/**
+ * @author Daniel Chabr
+ *         Service for accessing meal REST API
+ */
 public interface MealService {
 
     @GET("/meals")

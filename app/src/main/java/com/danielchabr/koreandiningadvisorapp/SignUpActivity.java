@@ -28,7 +28,8 @@ import retrofit.Response;
 import retrofit.Retrofit;
 
 /**
- * A login screen that offers login via email/password.
+ * @author Daniel Chabr
+ * A sign up screen to register new user with username, email and password
  */
 public class SignUpActivity extends AppCompatActivity {
 

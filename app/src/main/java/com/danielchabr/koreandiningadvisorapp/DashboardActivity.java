@@ -46,6 +46,10 @@ import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Retrofit;
 
+/**
+ * @author Daniel Chabr
+ *         The activity for main dashboard listing all meals
+ */
 public class DashboardActivity extends AppCompatActivity {
 
     private User user;
@@ -221,10 +225,10 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == INSERT_MEAL_CODE && resultCode == Activity.RESULT_OK) {
-            //Meal newMeal = Parcels.unwrap(data.getExtras().getParcelable("createdMeal"));
-            //meals.add(newMeal);
-            //mealAdapter.notifyDataSetChanged();
-            //mealListView.deferNotifyDataSetChanged();
+            Meal newMeal = Parcels.unwrap(data.getExtras().getParcelable("createdMeal"));
+            meals.add(newMeal);
+            mealAdapter.notifyDataSetChanged();
+            mealListView.deferNotifyDataSetChanged();
             loadMeals(mealService, meals, mealAdapter);
         } else if (requestCode == SHOW_MEAL_CODE && resultCode == Activity.RESULT_OK) {
             loadMeals(mealService, meals, mealAdapter);

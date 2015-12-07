@@ -44,6 +44,10 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
+/**
+ * @author Daniel Chabr
+ *         Edit meal activity
+ */
 public class EditMealActivity extends AppCompatActivity {
     private final int REQUEST_CODE = 5;
     private Bitmap bitmap;

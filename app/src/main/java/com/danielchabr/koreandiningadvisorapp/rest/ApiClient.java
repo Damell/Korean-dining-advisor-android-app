@@ -8,9 +8,12 @@ import com.squareup.okhttp.OkHttpClient;
 import retrofit.JacksonConverterFactory;
 import retrofit.Retrofit;
 
-public class ApiClient
-{
-    private static String BASE_URL = "http://kdadev-damell.rhcloud.com";
+/**
+ * @author Daniel Chabr
+ *         API client for accessing server, serves as MealService and UserService factory
+ */
+public class ApiClient {
+    private static String BASE_URL = "http://kda-damell.rhcloud.com";
     private static String IMAGE_URL = "/meals/images";
     private MealService mealService;
     private UserService userService;

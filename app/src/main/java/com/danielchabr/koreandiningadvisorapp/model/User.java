@@ -2,6 +2,10 @@ package com.danielchabr.koreandiningadvisorapp.model;
 
 import org.parceler.Parcel;
 
+/**
+ * @author Daniel Chabr
+ *         User model
+ */
 @Parcel
 public class User {
     String username;

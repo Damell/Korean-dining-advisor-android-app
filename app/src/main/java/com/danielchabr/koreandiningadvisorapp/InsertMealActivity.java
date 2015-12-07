@@ -43,6 +43,10 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
+/**
+ * @author Daniel Chabr
+ *         Insert meal activity serves for creating new meal and also uploading image of a meal. the view used is the same for this activity and edit activity as well
+ */
 public class InsertMealActivity extends AppCompatActivity {
     private final int REQUEST_CODE = 5;
     private Bitmap bitmap;

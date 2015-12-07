@@ -7,7 +7,8 @@ import retrofit.http.Body;
 import retrofit.http.POST;
 
 /**
- * Created by damell on 16/11/15.
+ * @author Daniel Chabr
+ * Service for accessing user REST API
  */
 public interface UserService {
 

@@ -9,7 +9,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-// taken from http://www.chupamobile.com/tutorial-android/android-load-images-from-web-and-caching-186
+/**
+ * @author taken from http://www.chupamobile.com/tutorial-android/android-load-images-from-web-and-caching-186
+ *         Utility class for using memory cache, it is used for caching images
+ */
 
 public class MemoryCache {
 

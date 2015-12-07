@@ -29,6 +29,7 @@ import retrofit.Response;
 import retrofit.Retrofit;
 
 /**
+ * @author Daniel Chabr
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity {

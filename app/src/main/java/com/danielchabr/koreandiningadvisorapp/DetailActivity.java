@@ -27,6 +27,10 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
+/**
+ * @author Daniel Chabr
+ *         Detail activity with all the details about a meal
+ */
 public class DetailActivity extends AppCompatActivity {
 
     private Meal meal;

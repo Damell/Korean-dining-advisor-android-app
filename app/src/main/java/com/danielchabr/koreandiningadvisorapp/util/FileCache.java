@@ -4,8 +4,10 @@ import android.content.Context;
 
 import java.io.File;
 
-// taken from http://www.chupamobile.com/tutorial-android/android-load-images-from-web-and-caching-186
-
+/**
+ * @author taken from http://www.chupamobile.com/tutorial-android/android-load-images-from-web-and-caching-186
+ *         Utility class for caching files
+ */
 public class FileCache {
 
     private File cacheDir;

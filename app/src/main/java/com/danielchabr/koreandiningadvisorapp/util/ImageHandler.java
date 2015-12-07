@@ -17,7 +17,10 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-// parts taken from https://github.com/Ink/filepicker-android/blob/master/filepicker-library/src/io/filepicker/utils/FilesUtils.java
+/**
+ * @author parts taken from https://github.com/Ink/filepicker-android/blob/master/filepicker-library/src/io/filepicker/utils/FilesUtils.java
+ *         Utility class for handling image coming from Intent to get image
+ */
 public class ImageHandler {
 
     public static Bitmap getBitmap(final Context context, final Uri uri, final int MAX_IMAGE_DIMENSION) throws IOException {
